@@ -210,19 +210,29 @@ export const inviteAgent = async (req, res) => {
     }
 
     const inviteToken = uuidv4();
-    const inviteExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000); // 48 hrs
+    const inviteExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000);
 
     const agent = await User.create({
       name, email,
       role: "agent",
       businessId,
-      isActive: false, // activated only after set-password
+      isActive: false,
       inviteToken,
       inviteExpiry,
     });
 
-    await sendInviteEmail(email, name, inviteToken);
-    res.status(201).json({ success: true, message: "Invite sent", agentId: agent._id });
+    // Non-blocking — email fail hone pe API fail nahi hogi
+    sendInviteEmail(email, name, inviteToken).catch((err) => {
+      console.error("Invite email failed (non-critical):", err.message);
+    });
+
+    // Token response mein bhi bhejo — hackathon demo ke liye useful
+    res.status(201).json({
+      success: true,
+      message: "Invite sent",
+      agentId: agent._id,
+      inviteToken, // frontend/postman se directly test kar sako
+    });
   } catch (err) {
     console.error("inviteAgent:", err);
     res.status(500).json({ success: false, message: "Failed to send invite" });
