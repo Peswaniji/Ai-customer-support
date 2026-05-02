@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
 import LoginPage from "./pages/LoginPage";
@@ -6,8 +7,16 @@ import DashboardPage from "./pages/DashboardPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
-  const { user, logout } = useAuth();
+  const { user, logout, refreshSession, loading } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    refreshSession().catch(() => {});
+  }, [refreshSession]);
+
+  if (loading && !user) {
+    return <div className="loading-panel">Checking session...</div>;
+  }
 
   return (
     <div className="app-shell">

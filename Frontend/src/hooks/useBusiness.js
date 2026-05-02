@@ -1,10 +1,16 @@
-import { useContext } from "react";
-import { BusinessContext } from "../contexts/BusinessContext";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { fetchBusiness, updateBusiness } from "../store/businessSlice";
 
 export const useBusiness = () => {
-  const context = useContext(BusinessContext);
-  if (!context) {
-    throw new Error("useBusiness must be used inside a BusinessProvider");
-  }
-  return context;
+  const dispatch = useAppDispatch();
+  const businessState = useAppSelector((state) => state.business);
+
+  const loadBusiness = async () => dispatch(fetchBusiness()).unwrap();
+  const saveBusiness = async (payload) => dispatch(updateBusiness(payload)).unwrap();
+
+  return {
+    ...businessState,
+    fetchBusiness: loadBusiness,
+    updateBusiness: saveBusiness,
+  };
 };

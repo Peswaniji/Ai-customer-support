@@ -1,10 +1,14 @@
-import { useContext } from "react";
-import { TicketContext } from "../contexts/TicketContext";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { fetchTickets } from "../store/ticketSlice";
 
 export const useTickets = () => {
-  const context = useContext(TicketContext);
-  if (!context) {
-    throw new Error("useTickets must be used inside a TicketProvider");
-  }
-  return context;
+  const dispatch = useAppDispatch();
+  const ticketState = useAppSelector((state) => state.tickets);
+
+  const loadTickets = async (params = {}) => dispatch(fetchTickets(params)).unwrap();
+
+  return {
+    ...ticketState,
+    fetchTickets: loadTickets,
+  };
 };

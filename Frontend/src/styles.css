@@ -117,44 +117,266 @@ input:focus {
   font-size: 0.95rem;
 }
 
-.dashboard-card {
+.dashboard-page {
   display: grid;
-  gap: 18px;
+  gap: 24px;
 }
 
-.dashboard-section {
+.dashboard-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 32px;
+  background: linear-gradient(135deg, #eff6ff 0%, #fdf2f8 100%);
+}
+
+.dashboard-hero h2 {
+  margin: 0.25rem 0 10px;
+  font-size: clamp(2rem, 2.4vw, 2.5rem);
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #4f46e5;
+  font-size: 0.75rem;
+  margin: 0;
+}
+
+.hero-copy {
+  max-width: 560px;
+  color: #475569;
+}
+
+.hero-summary {
   display: grid;
-  gap: 14px;
+  gap: 16px;
+  min-width: 240px;
+}
+
+.hero-summary div {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 18px 20px;
+}
+
+.hero-summary span {
+  display: block;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.hero-summary strong {
+  display: block;
+  font-size: 1.5rem;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.dashboard-stat-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  border-top: 6px solid #4f46e5;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.05);
+}
+
+.stat-card-title {
+  color: #64748b;
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.stat-card-value {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.stat-card-note {
+  color: #64748b;
 }
 
 .dashboard-grid {
   display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 24px;
+  grid-template-columns: 2fr 1fr;
 }
 
-.ticket-list {
+.dashboard-main {
   display: grid;
-  gap: 14px;
+  gap: 24px;
 }
 
-.ticket-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
+.dashboard-sidebar {
+  display: grid;
+  gap: 24px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.05);
+}
+
+.dashboard-graph-card,
+.dashboard-bar-card,
+.schedule-card {
+  display: grid;
+  gap: 20px;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.card-header h3 {
+  margin: 0.25rem 0 0;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 0.85rem;
+}
+
+.badge.secondary {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.chart-meta {
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.chart-meta div {
+  min-width: 140px;
+}
+
+.chart-meta strong {
+  display: block;
+  font-size: 1.75rem;
+}
+
+.chart-meta p {
+  margin: 6px 0 0;
+  color: #64748b;
+}
+
+.line-chart {
+  position: relative;
+  height: 260px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, #eef2ff 0%, #ffffff 100%);
+  overflow: hidden;
+}
+
+.line-point {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #4338ca;
+  transform: translate(-50%, 50%);
+  box-shadow: 0 0 0 8px rgba(67, 56, 202, 0.08);
+}
+
+.bar-chart {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 12px;
+  align-items: end;
+  min-height: 220px;
+}
+
+.bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.bar-fill {
+  width: 100%;
+  min-height: 32px;
+  background: linear-gradient(180deg, #4f46e5 0%, #818cf8 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.bar-item span {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+.schedule-list {
+  display: grid;
+  gap: 16px;
+}
+
+.schedule-item {
+  display: grid;
+  gap: 10px;
   padding: 18px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
   background: #f8fafc;
 }
 
-.ticket-card h4 {
-  margin: 0 0 10px;
+.schedule-item strong {
+  font-size: 0.95rem;
+  color: #0f172a;
 }
 
-.ticket-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 10px;
-  color: #475569;
+.schedule-item p {
+  margin: 0;
+  font-weight: 600;
+}
+
+.schedule-item span {
+  color: #64748b;
+}
+
+@media (max-width: 1100px) {
+  .dashboard-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .dashboard-hero,
+  .dashboard-cards {
+    padding: 24px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .line-chart {
+    height: 220px;
+  }
 }
 
 .loading-panel {
