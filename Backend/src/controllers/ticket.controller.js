@@ -1,6 +1,7 @@
 import Ticket from "../models/ticket.model.js";
 import Message from "../models/message.model.js";
 import User from "../models/user.model.js";
+import { getIO } from "../utils/socket.js";
 import { classifyQuery, generateSummary } from "../services/ai.service.js";
 import { invalidateCache } from "../middlewares/cache.middleware.js";
 
@@ -40,6 +41,16 @@ export const createTicket = async (req, res) => {
 
     // Respond immediately
     res.status(201).json({ success: true, ticket });
+
+    try {
+      const io = getIO();
+      if (io) {
+        const room = `business_${businessId}`;
+        io.to(room).emit("ticket:created", ticket);
+      }
+    } catch (emitErr) {
+      console.error("Socket emit failed:", emitErr.message);
+    }
 
     
     // AI classification — async non-blocking

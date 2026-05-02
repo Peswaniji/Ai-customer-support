@@ -270,6 +270,36 @@ const buildWidgetPanelHtml = (business) => {
         submitBtn.disabled = false;
       }
     });
+    // Socket.io client — show ticket updates in-panel
+    (function () {
+      try {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
+        s.onload = () => {
+          try {
+            console.log('[widget] socket.io client loaded');
+            const socket = window.io?.(apiBase) || window.io?.();
+            if (!socket) {
+              console.warn('[widget] socket.io not available on window.io');
+              return;
+            }
+            socket.emit('join', { businessId });
+            socket.on('connect', () => console.log('[widget] socket connected', socket.id));
+            socket.on('ticket:created', (ticket) => {
+              console.log('[widget] ticket event', ticket);
+              if (!ticket) return;
+              // show a subtle in-panel notification for new tickets
+              setStatus('New ticket created: ' + (ticket._id || ''), 'success');
+            });
+          } catch (e) {
+            console.error('[widget] socket client error', e);
+          }
+        };
+        document.head.appendChild(s);
+      } catch (e) {
+        // ignore
+      }
+    })();
   </script>
 </body>
 </html>`;

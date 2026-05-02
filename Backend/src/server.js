@@ -1,17 +1,11 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-
-console.log("GEMINI_API_KEY:", process.env.GEMINI_API_KEY ? "SET ✅" : "NOT SET ❌");
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
-
-
 import app from "./app.js";
 import { connectDB } from "./config/db.js";
 import mongoose from "mongoose";
+import { createServer } from "http";
+import { initSocket } from "./utils/socket.js";
 
 // Dynamic import — redis.js tab load hoga jab dotenv already set ho
 await import("./config/redis.js");
@@ -19,14 +13,21 @@ await import("./config/redis.js");
 connectDB();
 
 let server;
+let io;
 
-// Start server with graceful shutdown support (horizontal scaling readiness)
+// Start server with graceful shutdown support and Socket.io
 const startServer = async () => {
   try {
-    server = app.listen(process.env.PORT || 3000, () => {
-      console.log(`✅ Server running on port ${process.env.PORT || 3000}`);
+    const port = process.env.PORT || 3000;
+    const httpServer = createServer(app);
+    server = httpServer.listen(port, () => {
+      console.log(`✅ Server running on port ${port}`);
       console.log(`📌 Environment: ${process.env.NODE_ENV || "development"}`);
     });
+
+    // initialize socket.io
+    io = await initSocket(httpServer, { origins: [process.env.CLIENT_URL || "http://localhost:5173", "http://localhost:3001", "http://localhost:3000"] });
+    console.log("🔌 Socket.io initialized");
   } catch (err) {
     console.error("❌ Failed to start server:", err);
     process.exit(1);
