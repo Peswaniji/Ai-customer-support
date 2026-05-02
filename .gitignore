@@ -10,9 +10,18 @@ pnpm-debug.log*
 coverage/
 dist/
 build/
-node_modules/
-.env
-dist/
-.DS_Store
 *.log
-Project Status File Content.txt
+*.pdf
+*.txt
+!README.md
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+FEATURE_WORKFLOW.md
+apitest.md
+Backend/DEPLOYMENT_COMMANDS.md
+Backend/DEPLOYMENT_READY.md
+Backend/PRODUCTION_READINESS.md
+Backend/SCALING_ARCHITECTURE.md

@@ -4,12 +4,16 @@ import cors from "cors";
 import helmet from "helmet";
 
 import authRouter from "./routes/auth.routes.js";
+import businessRouter from "./routes/business.routes.js";
+import agentRouter from "./routes/agent.routes.js";
+import ticketRouter from "./routes/ticket.routes.js";
+import messageRouter from "./routes/message.routes.js";
+import aiRouter from "./routes/ai.routes.js";
+import analyticsRouter from "./routes/analytics.routes.js";
 
 const app = express();
 
-// ── Security headers ───────────────────────────────────────
 app.use(helmet());
-
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
@@ -17,17 +21,14 @@ app.use(cors({
   origin: process.env.CLIENT_URL || "http://localhost:5173",
 }));
 
-// ── Routes ─────────────────────────────────────────────────
-app.use("/api/auth", authRouter);
+app.use("/api/auth",      authRouter);
+app.use("/api/business",  businessRouter);
+app.use("/api/agents",    agentRouter);
+app.use("/api/tickets",   ticketRouter);
+app.use("/api/messages",  messageRouter);
+app.use("/api/ai",        aiRouter);
+app.use("/api/analytics", analyticsRouter);
 
-// app.use("/api/business",  businessRouter);
-// app.use("/api/agents",    agentRouter);
-// app.use("/api/tickets",   ticketRouter);
-// app.use("/api/messages",  messageRouter);
-// app.use("/api/ai",        aiRouter);
-// app.use("/api/analytics", analyticsRouter);
-
-// ── Global error handler ───────────────────────────────────
 app.use((err, req, res, next) => {
   console.error("Global Error:", err.stack);
   res.status(err.statusCode || 500).json({
