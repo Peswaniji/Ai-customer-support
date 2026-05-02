@@ -1,6 +1,9 @@
 import {createBrowserRouter} from 'react-router-dom'
 import Register from '../features/auth/pages/Register'
 import Login from '../features/auth/pages/Login'
+import AgentSidebar from '../features/agent/components/AgentSidebar'
+import Layout from '../features/agent/pages/Layout'
+import Dashboard from '../features/agent/pages/Dashboard'
 
 export const routes = createBrowserRouter([
     {
@@ -15,6 +18,16 @@ export const routes = createBrowserRouter([
         path:'/login',
         element:<Login />
     },
+    {
+        path:'/agent',
+        element:<Layout />,
+        children:[
+            {
+                path:'dashboard',
+                element:<Dashboard />
+            }
+        ]
+    }
   
         
     

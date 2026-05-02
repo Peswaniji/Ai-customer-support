@@ -16,3 +16,8 @@ export const login = async({email,password})=>{
     const response = await authApiInstance.post('/api/auth/login',{email,password})
     return response.data
 }
+
+export const getMe = async()=>{
+    const response = await authApiInstance.post('/api/business/me')
+    return response.data
+}
