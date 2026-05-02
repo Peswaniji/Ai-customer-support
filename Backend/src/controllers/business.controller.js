@@ -39,8 +39,13 @@ export const updateMyBusiness = async (req, res) => {
 export const getWidgetCode = async (req, res) => {
   try {
     const business = await Business.findById(req.user.businessId);
+    if (!business) {
+      return res.status(404).json({ success: false, message: "Business not found" });
+    }
+
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
     const snippet = `<script
-  src="${process.env.CLIENT_URL}/widget.js"
+  src="${baseUrl}/api/widget/${business._id}/loader.js"
   data-business-id="${business._id}"
   data-color="${business.widgetConfig.color}"
   data-welcome="${business.widgetConfig.welcomeMessage}"
