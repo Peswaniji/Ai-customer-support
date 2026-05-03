@@ -1,0 +1,164 @@
+.chat {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__header {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #222;
+  }
+
+  &__container {
+    display: flex;
+    gap: 1rem;
+    height: 80vh;
+  }
+
+  /* LEFT CHAT LIST */
+  &__list {
+    width: 30%;
+    background: linear-gradient(180deg, #fdf6f0, #f7efe5);
+    border: 0.05rem solid #eee;
+    border-radius: 0.8rem;
+    padding: 1rem;
+    overflow-y: auto;
+
+    .chat__item {
+      padding: 0.8rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      margin-bottom: 0.6rem;
+      background: #fff;
+      border: 0.05rem solid #eee;
+
+      h4 {
+        font-size: 0.95rem;
+        color: #333;
+      }
+
+      p {
+        font-size: 0.8rem;
+        color: #888;
+      }
+
+      &.active {
+        background: linear-gradient(135deg, #ff758c, #ff7eb3);
+        color: white;
+
+        h4,
+        p {
+          color: white;
+        }
+      }
+    }
+  }
+
+  /* RIGHT CHAT WINDOW */
+  &__window {
+    flex: 1;
+    background: #fff;
+    border: 0.05rem solid #eee;
+    border-radius: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__messages {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow-y: auto;
+
+    /* Message container - each message bubble */
+    .msg {
+      display: flex;
+      flex-direction: column;
+      max-width: 70%;
+      padding: 0.6rem 0.9rem;
+      border-radius: 0.6rem;
+      font-size: 0.9rem;
+
+      /* Message content */
+      .msg-content {
+        word-wrap: break-word;
+      }
+
+      /* Timestamp styling */
+      .msg-time {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        margin-top: 0.2rem;
+      }
+    }
+
+    /* Right side messages (agent/admin) */
+    .right {
+      align-self: flex-end;
+      background: #ff7eb3;
+      color: white;
+      border-bottom-right-radius: 0.1rem;
+      margin-left: auto;
+
+      .msg-time {
+        color: rgba(255, 255, 255, 0.8);
+        text-align: right;
+      }
+    }
+
+    /* Left side messages (customer/user) */
+    .left {
+      align-self: flex-start;
+      background: #f3e8db;
+      color: #333;
+      border-bottom-left-radius: 0.1rem;
+      margin-right: auto;
+
+      .msg-time {
+        color: rgba(0, 0, 0, 0.5);
+        text-align: left;
+      }
+    }
+  }
+
+  &__input {
+    display: flex;
+    padding: 0.8rem;
+    border-top: 0.05rem solid #eee;
+
+    input {
+      flex: 1;
+      padding: 0.6rem;
+      border: 0.05rem solid #eee;
+      border-radius: 0.5rem;
+      outline: none;
+    }
+
+    button {
+      margin-left: 0.5rem;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 0.5rem;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      color: white;
+      cursor: pointer;
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+/* Loading and empty states */
+.loading-text,
+.no-msgs {
+  text-align: center;
+  color: #888;
+  padding: 1rem;
+}
