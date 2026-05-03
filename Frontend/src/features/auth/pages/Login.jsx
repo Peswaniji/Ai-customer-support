@@ -21,11 +21,20 @@ const Login = () => {
       alert("Fill all fields");
       return;
     }
-    await handleLogin(form)
 
+    try {
+      const user = await handleLogin(form);
 
-
-    navigate("/");
+      // Check user role and redirect accordingly
+      if (user && user.role === 'agent') {
+        navigate("/agent/dashboard");
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      alert("Login failed. Please try again.");
+    }
   };
 
   return (
