@@ -89,6 +89,7 @@ export const registerBusiness = async (req, res) => {
 // ── POST /api/auth/login ──────────────────────────────────────
 // works for all roles: super_admin, business_admin, agent
 export const login = async (req, res) => {
+  console.log("Login attempt:", req.body);
   try {
     const { email, password } = req.body;
 
@@ -108,6 +109,7 @@ export const login = async (req, res) => {
     await user.save({ validateBeforeSave: false });
     setRefreshCookie(res, refreshToken);
 
+    console.log("Login successful for:", email);
     res.json({
       success: true,
       accessToken,
@@ -121,7 +123,7 @@ export const login = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("login:", err);
+    console.error("login error:", err);
     res.status(500).json({ success: false, message: "Login failed" });
   }
 };
@@ -223,7 +225,8 @@ export const inviteAgent = async (req, res) => {
 
     // Non-blocking — email fail hone pe API fail nahi hogi
     sendInviteEmail(email, name, inviteToken).catch((err) => {
-      console.error("Invite email failed (non-critical):", err.message);
+      console.error("❌ Invite email failed (non-critical):", err.message);
+      console.error("Full error:", err);
     });
 
     // Token response mein bhi bhejo — hackathon demo ke liye useful

@@ -13,6 +13,11 @@ import {
 
 const router = express.Router();
 
+// Handle OPTIONS for CORS preflight
+router.options("*", (req, res) => {
+  res.sendStatus(204);
+});
+
 // rate limited routes
 router.post("/register-business", authLimiter, registerBusinessValidator, validate, registerBusiness);
 router.post("/login", authLimiter, loginValidator, validate, login);

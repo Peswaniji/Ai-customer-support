@@ -31,13 +31,14 @@ const autoAssignAgent = async (businessId) => {
 // POST /api/tickets
 export const createTicket = async (req, res) => {
   try {
-    const { subject, description } = req.body;
+    const { subject, description,agentId } = req.body;
     const businessId = req.user.businessId;
     const customerId = req.user._id;
 
     const ticket = await Ticket.create({
-      businessId, customerId, subject, description,
+      businessId, customerId, subject, description, assignedAgentId: agentId
     });
+    
 
     // Respond immediately
     res.status(201).json({ success: true, ticket });
