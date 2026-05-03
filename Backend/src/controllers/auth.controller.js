@@ -201,16 +201,35 @@ export const customerSession = async (req, res) => {
 // business_admin invites an agent by email
 export const inviteAgent = async (req, res) => {
   try {
-    const { name, email } = req.body;
-    const businessId = req.user.businessId;
+    const { name, email } = req.body
+    const businessId = req.user.businessId
 
-    const existing = await User.findOne({ email });
+    const existing = await User.findOne({ email })
     if (existing) {
-      return res.status(409).json({ success: false, message: "Email already in use" });
+      return res.status(409).json({ success: false, message: "Email already in use" })
     }
 
-    const inviteToken = uuidv4();
-    const inviteExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000);
+    // ── Plan limit check ──────────────────────────────────────
+    const business = await Business.findById(businessId)
+    const currentAgentCount = await User.countDocuments({
+      businessId,
+      role: "agent",
+    })
+
+    if (currentAgentCount >= business.planLimits.maxAgents) {
+      return res.status(403).json({
+        success: false,
+        message: `Your ${business.plan} plan allows maximum ${business.planLimits.maxAgents} agents. Please upgrade to add more.`,
+        code: "PLAN_LIMIT_REACHED",
+        currentCount: currentAgentCount,
+        maxAllowed: business.planLimits.maxAgents,
+        upgradeTo: "pro",
+      })
+    }
+    // ─────────────────────────────────────────────────────────
+
+    const inviteToken = uuidv4()
+    const inviteExpiry = new Date(Date.now() + 48 * 60 * 60 * 1000)
 
     const agent = await User.create({
       name, email,
@@ -219,23 +238,21 @@ export const inviteAgent = async (req, res) => {
       isActive: false,
       inviteToken,
       inviteExpiry,
-    });
+    })
 
-    // Non-blocking — email fail hone pe API fail nahi hogi
     sendInviteEmail(email, name, inviteToken).catch((err) => {
-      console.error("Invite email failed (non-critical):", err.message);
-    });
+      console.error("Invite email failed (non-critical):", err.message)
+    })
 
-    // Token response mein bhi bhejo — hackathon demo ke liye useful
     res.status(201).json({
       success: true,
       message: "Invite sent",
       agentId: agent._id,
-      inviteToken, // frontend/postman se directly test kar sako
-    });
+      inviteToken,
+    })
   } catch (err) {
-    console.error("inviteAgent:", err);
-    res.status(500).json({ success: false, message: "Failed to send invite" });
+    console.error("inviteAgent:", err)
+    res.status(500).json({ success: false, message: "Failed to send invite" })
   }
 };
 
