@@ -1,23 +1,39 @@
-import axios from 'axios'
+import ticketApiInstance from "../../api/axios";
 
-const ticketApiInstance = axios.create({
-    baseURL:'http://localhost:8001',
-    withCredentials:true
-})
+// 🔵 Assigned tickets
+export const assignAgentTicket = async () => {
+  const response = await ticketApiInstance.get(
+    "/api/tickets"
+  );
+  return response.data;
+};
 
-export const activeChatsForAgent = async()=>{
-    const response = await ticketApiInstance.get('/api/tickets?status=open')
-    return response.data
-}
-export const myTicketsforAgent = async({agentId})=>{
-   const response = await ticketApiInstance.get(`/api/tickets`)
-   console.log(response);
-   
-   return response.data
-}
+// 🟢 Active chats
+export const activeChatsForAgent = async () => {
+  const response = await ticketApiInstance.get(
+    "/api/tickets?status=open"
+  );
+  return response.data;
+};
 
-export const resolveTicket = async({ticketId})=>{
-    const response = await ticketApiInstance.post(`/api/tickets?status=resolved
-`)
-    return response.data
-}
+
+// 🟡 In progress
+export const progressTicketsForAgent = async () => {
+  const response = await ticketApiInstance.get(
+    "/api/tickets?status=in_progress"
+  );
+  return response.data;
+};
+
+
+// 🔴 Resolve ticket (CORRECT WAY)
+export const resolveTicket = async (ticketId) => {
+  const response = await ticketApiInstance.patch(
+    `/api/tickets/${ticketId}/status`,
+    {
+      status: "resolved",
+    }
+  );
+
+  return response.data;
+};

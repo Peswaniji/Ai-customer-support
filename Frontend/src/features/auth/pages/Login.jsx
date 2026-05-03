@@ -14,28 +14,33 @@ const Login = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit =async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const response = await handleLogin(form);
+    console.log("Response from hook:", response);
 
-    if (!form.email || !form.password) {
-      alert("Fill all fields");
-      return;
-    }
+    // Postman ke mutabiq yahan se token nikalye
+    const token = response.accessToken; 
+    const userData = response.user;
 
-    try {
-      const user = await handleLogin(form);
-
-      // Check user role and redirect accordingly
-      if (user && user.role === 'agent') {
+    if (token) {
+      localStorage.setItem("accessToken", token);
+      console.log("Token successfully stored in LocalStorage!");
+      
+      // Role check ke liye userData use karein
+      if (userData?.role === 'agent') {
         navigate("/agent/dashboard");
       } else {
         navigate("/");
       }
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Login failed. Please try again.");
+    } else {
+      console.error("AccessToken missing! Check if hook returns 'res.data'");
     }
-  };
+  } catch (error) {
+    console.error("Login Error:", error);
+  }
+};
 
   return (
     <div className="auth">
