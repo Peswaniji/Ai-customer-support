@@ -13,7 +13,7 @@ import {
 
 const router = express.Router();
 
-router.post("/",                    protect, authorize("customer"),                            createTicketValidator,    validate, createTicket);
+router.post("/",                    protect, authorize("customer","business_admin"),                            createTicketValidator,    validate, createTicket);
 router.get("/",                     protect, authorize("agent","business_admin","super_admin"),getTicketsValidator,      validate, getTickets);
 router.get("/:ticketId",            protect,                                                  ticketIdValidator,        validate, getTicketById);
 router.patch("/:ticketId/status",   protect, authorize("agent","business_admin"),             updateStatusValidator,    validate, updateTicketStatus);
