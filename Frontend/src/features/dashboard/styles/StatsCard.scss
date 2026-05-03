@@ -1,0 +1,49 @@
+@use "../../../shared/styles/variables" as *;
+@use "../../../shared/styles/mixins" as *;
+
+.stats-card {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid $border-light;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;        // ← overflow rokne ke liye
+  overflow: hidden;    // ← ye bhi
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;    // ← icon shrink na ho
+    font-size: 20px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;      // ← text overflow handle
+  }
+
+  &__label {
+    font-size: $font-xs;
+    color: $text-medium;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__value {
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1;
+  }
+}

@@ -1,0 +1,17 @@
+@use "../../../shared/styles/variables" as *;
+@use "../../../shared/styles/mixins" as *;
+
+.agents-page {
+  &__header {
+    @include flex-between;
+    margin-bottom: $spacing-lg;
+
+    @include mobile {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      button { width: 100%; }
+    }
+  }
+}

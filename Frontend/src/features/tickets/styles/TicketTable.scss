@@ -1,0 +1,119 @@
+@use "../../../shared/styles/variables" as *;
+@use "../../../shared/styles/mixins" as *;
+
+.ticket-table {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid $border-light;
+  overflow: hidden;
+
+  &__loading {
+    padding: 60px;
+    text-align: center;
+    color: $text-medium;
+    font-size: $font-sm;
+  }
+
+  &__empty {
+    padding: 60px;
+    text-align: center;
+    color: $text-medium;
+
+    span {
+      font-size: 40px;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-size: $font-md;
+      font-weight: 500;
+      color: $text-medium;
+    }
+  }
+
+  &__wrapper { overflow-x: auto; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 650px;
+  }
+
+  thead tr {
+    background: $primary-lighter;
+    border-bottom: 1px solid $border-light;
+  }
+
+  th {
+    padding: 13px 20px;
+    text-align: left;
+    font-size: $font-xs;
+    color: $text-medium;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #fef3e2;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: $primary-lighter; }
+  }
+
+  td {
+    padding: 15px 20px;
+    font-size: $font-md;
+    color: $text-dark;
+    white-space: nowrap;
+  }
+
+  &__subject {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    white-space: normal;
+    max-width: 240px;
+
+    span:first-child {
+      font-weight: 500;
+      color: $text-dark;
+    }
+  }
+
+  &__category {
+    font-size: $font-xs !important;
+    color: $text-medium !important;
+    font-weight: 400 !important;
+    text-transform: capitalize;
+  }
+
+  &__customer,
+  &__agent,
+  &__date {
+    color: $text-medium !important;
+    font-size: $font-sm !important;
+  }
+
+  &__unassigned {
+    color: $danger !important;
+    font-size: $font-xs;
+    font-weight: 500;
+  }
+
+  &__priority {
+    font-size: $font-xs;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .priority-low      { background: #dcfce7; color: #16a34a; }
+  .priority-medium   { background: #fef9c3; color: #a16207; }
+  .priority-high     { background: #ffedd5; color: #c2410c; }
+  .priority-critical { background: #fee2e2; color: #dc2626; }
+}

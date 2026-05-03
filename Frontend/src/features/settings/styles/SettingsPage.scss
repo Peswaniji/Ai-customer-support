@@ -1,0 +1,211 @@
+@use "../../../shared/styles/variables" as *;
+@use "../../../shared/styles/mixins" as *;
+
+.settings-page {
+  &__loading {
+    @include flex-center;
+    height: 300px;
+    color: $text-medium;
+  }
+
+  &__header {
+    margin-bottom: $spacing-lg;
+  }
+
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+    align-items: flex-start;
+
+    @include tablet {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__widget {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__success {
+    background: $online-bg;
+    color: $online;
+    padding: 10px 14px;
+    border-radius: $radius-sm;
+    font-size: $font-sm;
+    font-weight: 500;
+  }
+
+  &__save-btn {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+.settings-card {
+  @include card;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__title {
+    font-size: $font-md;
+    font-weight: 500;
+    color: $text-dark;
+    padding-bottom: 12px;
+    border-bottom: 0.5px solid $border-light;
+  }
+
+  &__sub {
+    font-size: $font-sm;
+    color: $text-medium;
+    margin-top: -8px;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    label {
+      font-size: $font-sm;
+      font-weight: 500;
+      color: $text-dark;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    textarea {
+      border: 1px solid $border-light;
+      border-radius: $radius-sm;
+      padding: 10px 12px;
+      font-size: $font-sm;
+      background: $primary-lighter;
+      color: $text-dark;
+      resize: vertical;
+
+      &::placeholder { color: #c4a97a; }
+      &:focus { border-color: $primary; outline: none; }
+    }
+
+    &--row {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  &__color-row {
+    @include flex-align;
+    gap: 10px;
+  }
+
+  &__color-picker {
+    width: 44px;
+    height: 38px;
+    border: 1px solid $border-light;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    padding: 2px;
+    background: white;
+  }
+
+  &__color-text { flex: 1; }
+
+  &__range {
+    accent-color: $primary;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  &__range-labels {
+    @include flex-between;
+    font-size: $font-xs;
+    color: $text-medium;
+  }
+
+  &__toggle {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+
+    input { opacity: 0; width: 0; height: 0; }
+
+    &-slider {
+      position: absolute;
+      inset: 0;
+      background: #ccc;
+      border-radius: $radius-pill;
+      transition: 0.3s;
+
+      &::before {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        left: 3px;
+        top: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+    }
+
+    input:checked + &-slider { background: $primary; }
+    input:checked + &-slider::before { transform: translateX(20px); }
+  }
+
+  &__code-box {
+    background: #1a1f36;
+    border-radius: $radius-sm;
+    padding: 14px;
+    overflow-x: auto;
+
+    pre {
+      color: #fac775;
+      font-size: 11px;
+      white-space: pre-wrap;
+      word-break: break-all;
+      font-family: monospace;
+    }
+  }
+
+  &__copy-btn { width: 100%; padding: 10px; }
+
+  &__plan { @include flex-center; }
+
+  &__plan-badge {
+    background: $primary-light;
+    color: $primary-dark;
+    font-size: $font-sm;
+    font-weight: 600;
+    padding: 6px 16px;
+    border-radius: $radius-pill;
+  }
+
+  &__plan-details {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__plan-item {
+    @include flex-between;
+    font-size: $font-sm;
+    color: $text-medium;
+    padding-bottom: 10px;
+    border-bottom: 0.5px solid $primary-light;
+
+    &:last-child { border-bottom: none; padding-bottom: 0; }
+    span:last-child { font-weight: 500; color: $text-dark; }
+  }
+}

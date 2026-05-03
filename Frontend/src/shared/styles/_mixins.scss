@@ -1,0 +1,109 @@
+@use "variables" as *;
+
+// Flex center
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Flex between
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// Flex align
+@mixin flex-align {
+  display: flex;
+  align-items: center;
+}
+
+// Card
+@mixin card {
+  background: $white;
+  border-radius: $radius-lg;
+  border: 0.5px solid $border-light;
+  padding: $spacing-md;
+}
+
+// Status badge
+@mixin status-badge($bg, $color) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: $radius-pill;
+  font-size: $font-xs;
+  background: $bg;
+  color: $color;
+  font-weight: 500;
+}
+
+// Button primary
+@mixin btn-primary {
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: $radius-sm;
+  padding: 8px 16px;
+  font-size: $font-md;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover { opacity: 0.9; }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+}
+
+// Button outline
+@mixin btn-outline {
+  background: none;
+  color: $primary-dark;
+  border: 0.5px solid $border-light;
+  border-radius: $radius-sm;
+  padding: 6px 12px;
+  font-size: $font-sm;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { background: $primary-light; }
+}
+
+// Page header
+@mixin page-header {
+  @include flex-between;
+  margin-bottom: $spacing-lg;
+
+  .page-title {
+    font-size: $font-xl;
+    font-weight: 500;
+    color: $text-dark;
+  }
+
+  .page-sub {
+    font-size: $font-xs;
+    color: $text-medium;
+    margin-top: 2px;
+  }
+}
+
+// Scrollbar
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: $primary-lighter; }
+  &::-webkit-scrollbar-thumb {
+    background: $border-light;
+    border-radius: 4px;
+  }
+}
+
+// Breakpoints
+@mixin mobile {
+  @media (max-width: 640px) { @content; }
+}
+
+@mixin tablet {
+  @media (max-width: 1024px) { @content; }
+}

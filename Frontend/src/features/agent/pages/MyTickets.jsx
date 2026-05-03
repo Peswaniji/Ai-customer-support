@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useTickets } from "../../tickets/hook/useTicket"; // Path check kar lein
+import useTickets from "../../tickets/hooks/useTickets.js";
 import "../styles/myTickets.scss";
 import { useNavigate } from "react-router-dom";
 

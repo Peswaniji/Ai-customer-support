@@ -1,0 +1,285 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+.sidebar {
+  width: 230px;
+  height: 100vh;
+  background: #fff;
+  border-right: 1px solid $border-light;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  transition: width 0.3s ease;
+  position: relative;
+  overflow: hidden;
+
+ 
+  &--collapsed {
+    width: 68px;
+
+    .sidebar__logo-text   { display: none; }
+    .sidebar__close-btn   { display: none; }
+    .sidebar__nav-label   { display: none; }
+    .sidebar__user-info   { display: none; }
+    .sidebar__logout-text { display: none; }
+
+    .sidebar__nav-item {
+      justify-content: center;
+      padding: 12px 0;
+      margin: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .sidebar__user {
+      justify-content: center;
+      background: transparent;
+      padding: 4px 0;
+    }
+
+    .sidebar__logout {
+      justify-content: center;
+      padding: 10px 0;
+    }
+  }
+
+  // ── Logo ─────────────────────────────────────
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 18px 16px;
+    border-bottom: 1px solid $border-light;
+    min-height: 64px;
+    flex-shrink: 0;
+  }
+
+  &__logo-icon {
+    width: 36px;
+    height: 36px;
+    background: $primary;
+    border-radius: $radius-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 18px;
+  }
+
+  &__logo-text {
+    font-size: 16px;
+    font-weight: 700;
+    color: $text-dark;
+    white-space: nowrap;
+    flex: 1;
+  }
+
+  // Mobile close (X) — only on mobile
+  &__close-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $text-medium;
+    padding: 4px;
+    flex-shrink: 0;
+
+    @include mobile {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  // ── Desktop toggle ────────────────────────────
+  &__toggle {
+    position: absolute;
+    right: 20px;
+    width: 26px;
+    height: 26px;
+    background: white;
+    border: 1.5px solid $border-light;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: $primary-dark;
+    z-index: 10;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background 0.2s;
+
+    &:hover { background: $primary-lighter; }
+
+    // Hide on mobile
+    @include mobile { display: none !important; }
+  }
+
+  // ── Nav ──────────────────────────────────────
+  &__nav {
+    flex: 1;
+    padding: 10px 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+  }
+
+  &__nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    color: $text-medium;
+    font-size: $font-md;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 10px;
+    transition: all 0.15s;
+    white-space: nowrap;
+
+    &:hover {
+      background: $primary-lighter;
+      color: $primary-dark;
+    }
+
+    &--active {
+      background: $primary;
+      color: white;
+
+      .sidebar__nav-icon svg { fill: white; }
+    }
+  }
+
+  &__nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 20px;
+
+    svg { fill: currentColor; }
+  }
+
+  &__nav-label {
+    white-space: nowrap;
+  }
+
+  // ── Footer ───────────────────────────────────
+  &__footer {
+    padding: 12px 8px;
+    border-top: 1px solid $border-light;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: $primary-lighter;
+    overflow: hidden;
+  }
+
+  &__avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: $primary;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-sm;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  &__user-info {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+  }
+
+  &__user-name {
+    color: $text-dark;
+    font-size: $font-sm;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__user-role {
+    color: $text-medium;
+    font-size: $font-xs;
+    text-transform: capitalize;
+  }
+
+  &__logout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: $danger;
+    background: $danger-bg;
+    border: none;
+    cursor: pointer;
+    font-size: $font-sm;
+    font-weight: 500;
+    padding: 9px 14px;
+    border-radius: 10px;
+    width: 100%;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+
+    &:hover { opacity: 0.8; }
+  }
+
+  // ── Mobile ───────────────────────────────────
+  @include mobile {
+    position: fixed !important;
+    left: 0;
+    top: 0;
+    z-index: 160;
+    width: 230px !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.12);
+
+    // Mobile pe collapsed ka koi asar nahi
+    &--collapsed {
+      width: 230px !important;
+
+      .sidebar__logo-text   { display: block !important; }
+      .sidebar__nav-label   { display: block !important; }
+      .sidebar__user-info   { display: flex !important; }
+      .sidebar__logout-text { display: inline !important; }
+
+      .sidebar__nav-item {
+        justify-content: flex-start !important;
+        padding: 10px 14px !important;
+        margin: 0 !important;
+        border-radius: 10px !important;
+      }
+
+      .sidebar__user {
+        justify-content: flex-start !important;
+        background: $primary-lighter !important;
+        padding: 8px 10px !important;
+      }
+
+      .sidebar__logout {
+        justify-content: flex-start !important;
+        padding: 9px 14px !important;
+      }
+    }
+
+    &--mobile-open {
+      transform: translateX(0) !important;
+    }
+  }
+}

@@ -1,0 +1,19 @@
+@use "../../../shared/styles/variables" as *;
+
+.trends-chart {
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: $text-dark;
+    margin-bottom: 16px;
+  }
+
+  &__loading {
+    height: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-medium;
+    font-size: $font-sm;
+  }
+}

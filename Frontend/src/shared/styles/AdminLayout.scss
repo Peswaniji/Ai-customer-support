@@ -1,0 +1,72 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+.admin-layout {
+  display: flex;
+  height: 100vh;
+  background: $primary-lighter;
+  overflow: hidden;
+}
+
+.admin-main {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 28px 32px;
+  background: $primary-lighter;
+  min-width: 0;
+  position: relative;
+
+  @include tablet { padding: 20px; }
+
+  @include mobile {
+    padding: 16px;
+    padding-top: 56px;
+  }
+}
+
+// Hamburger — SIRF mobile pe
+.mobile-hamburger {
+  display: none;
+
+  @include mobile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 20px;
+    left: 12px;
+    z-index: 10;
+    background: white;
+    border: 1.5px solid $border-light;
+    border-radius: $radius-md;
+    padding: 7px;
+    cursor: pointer;
+    color: $text-dark;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  }
+}
+
+.sidebar-overlay {
+  display: none;
+
+  @include mobile {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 150;
+  }
+}
+
+.page-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: $text-dark;
+}
+
+.page-sub {
+  font-size: $font-sm;
+  color: $text-medium;
+  margin-top: 3px;
+}
