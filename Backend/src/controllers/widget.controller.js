@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Business from "../models/business.model.js";
 
 const escapeHtml = (value = "") =>
@@ -7,6 +8,35 @@ const escapeHtml = (value = "") =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+
+// FIX: Determine correct base URL accounting for reverse proxies
+const getBaseUrl = (req) => {
+  const proto = req.headers["x-forwarded-proto"] || (req.secure ? "https" : req.protocol);
+  return `${proto}://${req.get("host")}`;
+};
+
+const loadBusiness = async (businessId, res, responseType = "json") => {
+  if (!mongoose.isValidObjectId(businessId)) {
+    if (responseType === "json") {
+      res.status(400).json({ success: false, message: "Invalid business ID" });
+    } else {
+      res.status(400).send("Invalid business ID");
+    }
+    return null;
+  }
+
+  const business = await Business.findById(businessId).lean();
+  if (!business) {
+    if (responseType === "json") {
+      res.status(404).json({ success: false, message: "Business not found" });
+    } else {
+      res.status(404).send("Business not found");
+    }
+    return null;
+  }
+
+  return business;
+};
 
 const buildLoaderScript = (businessId, panelUrl, color, welcomeMessage) => `(() => {
   const currentScript = document.currentScript;
@@ -85,7 +115,7 @@ const buildLoaderScript = (businessId, panelUrl, color, welcomeMessage) => `(() 
   mountWidget();
 })();`;
 
-const buildWidgetPanelHtml = (business) => {
+const buildWidgetPanelHtml = (business, apiBase) => {
   const color = business.widgetConfig?.color || "#1E40AF";
   const welcomeMessage = business.widgetConfig?.welcomeMessage || "Hi! How can we help you today?";
   const businessName = business.name || "Support";
@@ -160,7 +190,6 @@ const buildWidgetPanelHtml = (business) => {
     .success { color: #15803d; font-weight: 700; }
     .error { color: #b91c1c; font-weight: 700; }
     .small { font-size: 12px; color: var(--muted); }
-    .hidden { display: none; }
   </style>
 </head>
 <body>
@@ -204,7 +233,8 @@ const buildWidgetPanelHtml = (business) => {
 
   <script>
     const businessId = ${JSON.stringify(String(business._id))};
-    const apiBase = window.location.origin;
+    // FIX: Use the server-determined apiBase (handles HTTP vs HTTPS correctly)
+    const apiBase = ${JSON.stringify(apiBase)};
     const statusEl = document.getElementById('status');
     const submitBtn = document.getElementById('submitBtn');
     const closeBtn = document.getElementById('closeBtn');
@@ -226,6 +256,12 @@ const buildWidgetPanelHtml = (business) => {
 
       if (!name || !email || !subject || !description) {
         setStatus('Please fill name, email, subject and description.', 'error');
+        return;
+      }
+
+      // Basic email validation
+      if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) {
+        setStatus('Please enter a valid email address.', 'error');
         return;
       }
 
@@ -260,16 +296,22 @@ const buildWidgetPanelHtml = (business) => {
 
         setStatus(
           ticketData.ticket?.status === 'auto_resolved'
-            ? 'Ticket created and auto-resolved. Ticket ID: ' + ticketData.ticket._id
-            : 'Ticket created successfully. Ticket ID: ' + ticketData.ticket._id,
+            ? '✅ Your query was automatically resolved! Ticket ID: ' + ticketData.ticket._id
+            : '✅ Ticket created! Our team will respond shortly. ID: ' + ticketData.ticket._id,
           'success'
         );
+
+        // Clear form on success
+        ['name', 'email', 'subject', 'description'].forEach((id) => {
+          document.getElementById(id).value = '';
+        });
       } catch (error) {
-        setStatus(error.message || 'Something went wrong.', 'error');
+        setStatus(error.message || 'Something went wrong. Please try again.', 'error');
       } finally {
         submitBtn.disabled = false;
       }
     });
+
     // Socket.io client — show ticket updates in-panel
     (function () {
       try {
@@ -277,19 +319,13 @@ const buildWidgetPanelHtml = (business) => {
         s.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
         s.onload = () => {
           try {
-            console.log('[widget] socket.io client loaded');
-            const socket = window.io?.(apiBase) || window.io?.();
-            if (!socket) {
-              console.warn('[widget] socket.io not available on window.io');
-              return;
-            }
+            const socket = window.io?.(apiBase);
+            if (!socket) return;
             socket.emit('join', { businessId });
-            socket.on('connect', () => console.log('[widget] socket connected', socket.id));
-            socket.on('ticket:created', (ticket) => {
-              console.log('[widget] ticket event', ticket);
-              if (!ticket) return;
-              // show a subtle in-panel notification for new tickets
-              setStatus('New ticket created: ' + (ticket._id || ''), 'success');
+            socket.on('ticket:updated', (data) => {
+              if (data?.status === 'auto_resolved') {
+                setStatus('Your ticket has been auto-resolved by AI!', 'success');
+              }
             });
           } catch (e) {
             console.error('[widget] socket client error', e);
@@ -297,7 +333,7 @@ const buildWidgetPanelHtml = (business) => {
         };
         document.head.appendChild(s);
       } catch (e) {
-        // ignore
+        // ignore — socket is non-critical
       }
     })();
   </script>
@@ -307,12 +343,10 @@ const buildWidgetPanelHtml = (business) => {
 
 export const getWidgetConfig = async (req, res) => {
   try {
-    const business = await Business.findById(req.params.businessId);
-    if (!business) {
-      return res.status(404).json({ success: false, message: "Business not found" });
-    }
+    const business = await loadBusiness(req.params.businessId, res);
+    if (!business) return;
 
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const baseUrl = getBaseUrl(req);
     res.json({
       success: true,
       business: {
@@ -332,12 +366,10 @@ export const getWidgetConfig = async (req, res) => {
 
 export const getWidgetLoader = async (req, res) => {
   try {
-    const business = await Business.findById(req.params.businessId);
-    if (!business) {
-      return res.status(404).send("Business not found");
-    }
+    const business = await loadBusiness(req.params.businessId, res, "text");
+    if (!business) return;
 
-    const baseUrl = `${req.protocol}://${req.get("host")}`;
+    const baseUrl = getBaseUrl(req);
     const panelUrl = `${baseUrl}/api/widget/${business._id}/panel`;
     const script = buildLoaderScript(
       business._id,
@@ -346,7 +378,10 @@ export const getWidgetLoader = async (req, res) => {
       business.widgetConfig?.welcomeMessage
     );
 
-    res.type("application/javascript").send(script);
+    res
+      .type("application/javascript")
+      .set("Cache-Control", "public, max-age=60") // 1 minute cache for loader script
+      .send(script);
   } catch (err) {
     console.error("getWidgetLoader:", err);
     res.status(500).type("application/javascript").send("console.error('Failed to load widget');");
@@ -355,12 +390,14 @@ export const getWidgetLoader = async (req, res) => {
 
 export const getWidgetPanel = async (req, res) => {
   try {
-    const business = await Business.findById(req.params.businessId);
-    if (!business) {
-      return res.status(404).send("Business not found");
-    }
+    const business = await loadBusiness(req.params.businessId, res, "text");
+    if (!business) return;
 
-    res.type("html").send(buildWidgetPanelHtml(business));
+    const baseUrl = getBaseUrl(req);
+    res
+      .type("html")
+      .set("Cache-Control", "no-store") // Panel should not be cached
+      .send(buildWidgetPanelHtml(business, baseUrl));
   } catch (err) {
     console.error("getWidgetPanel:", err);
     res.status(500).send("Failed to load widget panel");

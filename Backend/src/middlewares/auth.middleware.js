@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user.model.js";
+import { isTokenBlacklisted } from "./cache.middleware.js";
 
 // verify JWT + attach req.user
 export const protect = async (req, res, next) => {
@@ -9,6 +10,13 @@ export const protect = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "No token provided" });
     }
     const token = authHeader.split(" ")[1];
+
+    // FIX: Check if token was blacklisted (i.e. user already logged out)
+    const blacklisted = await isTokenBlacklisted(token);
+    if (blacklisted) {
+      return res.status(401).json({ success: false, message: "Token has been revoked" });
+    }
+
     const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     const user = await User.findById(decoded.userId).select("-password -refreshToken");
     if (!user || !user.isActive) {
@@ -18,7 +26,9 @@ export const protect = async (req, res, next) => {
     next();
   } catch (err) {
     if (err.name === "TokenExpiredError") {
-      return res.status(401).json({ success: false, message: "Token expired", code: "TOKEN_EXPIRED" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Token expired", code: "TOKEN_EXPIRED" });
     }
     return res.status(401).json({ success: false, message: "Invalid token" });
   }
@@ -38,11 +48,12 @@ export const authorize = (...roles) => {
 };
 
 // attach req.businessId — enforces multi-tenant scoping on every query
-// super_admin bypasses this (can see all businesses)
 export const scopeBusiness = (req, res, next) => {
   if (req.user.role === "super_admin") return next();
   if (!req.user.businessId) {
-    return res.status(403).json({ success: false, message: "No business associated with this account" });
+    return res
+      .status(403)
+      .json({ success: false, message: "No business associated with this account" });
   }
   req.businessId = req.user.businessId;
   next();

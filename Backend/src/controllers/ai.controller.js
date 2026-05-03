@@ -42,4 +42,4 @@ export const suggestReplies = async (req, res) => {
     console.error("suggestReplies:", err);
     res.status(500).json({ success: false, message: "Failed to generate suggestions" });
   }
-}; 
+};
