@@ -1,8 +1,13 @@
 // Sidebar.jsx
 import React from "react";
 import "../styles/agentSidebar.scss";
+import { useNavigate } from "react-router-dom";
 
 const AgentSidebar  = () => {
+  const navigate = useNavigate()
+  function openMyTickets(){
+    navigate('/agent/my-tickets')
+  }
   return (
     <div className="sidebar">
       <div className="sidebar__top">
@@ -19,7 +24,7 @@ const AgentSidebar  = () => {
         <ul>
           <li className="active">Dashboard</li>
           <li>Active Chats</li>
-          <li>My Tickets</li>
+          <li onClick={openMyTickets}>My Tickets</li>
           <li>AI Suggestions</li>
           <li>Knowledge</li>
           <li>Reports</li>

@@ -1,132 +1,60 @@
 .dashboard {
-  padding: 1rem;
-  width: 100%;
-  box-sizing: border-box;
+  width: 100%;   // full available width
+  min-height: 100%;
 
   &__title {
-    font-size: 1.8rem;
+    font-size: 1.4rem;
     font-weight: 600;
-    color: #333;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.2rem;
+    color: #222;
   }
 
   &__cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    display: flex;
     gap: 1rem;
-    margin-bottom: 2rem;
+    flex-wrap: wrap;
 
     .card {
-      background: #fff;
-      padding: 1.2rem;
-      border-radius: 0.8rem;
-      box-shadow: 0 0.3rem 1rem rgba(0,0,0,0.06);
-      text-align: center;
-      min-width: 0; /* Allow shrinking */
+      flex: 1;
+      min-width: 12rem;
 
-      h2 {
-        color: #ff7eb3;
-        font-size: 2rem;
-        margin: 0;
-      }
-
-      p {
-        margin-top: 0.5rem;
-        color: #666;
-        font-size: 0.9rem;
-      }
-    }
-  }
-
-  &__recent {
-    background: #fff;
-    padding: 1.2rem;
-    border-radius: 0.8rem;
-    box-shadow: 0 0.3rem 1rem rgba(0,0,0,0.06);
-    width: 100%;
-    box-sizing: border-box;
-
-    h2 {
-      margin-bottom: 1rem;
-      font-size: 1.2rem;
-    }
-
-    .ticket {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.8rem;
-      border-bottom: 0.1rem solid #eee;
-      gap: 1rem;
-
-      p {
-        margin: 0;
-        flex: 1;
-        min-width: 0;
-        word-break: break-word;
-      }
-
-      span {
-        background: #ff7eb3;
-        color: #fff;
-        padding: 0.3rem 0.7rem;
-        border-radius: 0.5rem;
-        font-size: 0.8rem;
-        white-space: nowrap;
-        flex-shrink: 0;
-      }
-    }
-  }
-}
-
-/* 📱 Responsive */
-@media (max-width: 768px) {
-  .dashboard {
-    padding: 0.8rem;
-
-    &__title {
-      font-size: 1.5rem;
-    }
-
-    &__cards {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 0.8rem;
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .dashboard {
-    padding: 0.6rem;
-
-    &__cards {
-      grid-template-columns: 1fr;
-      gap: 0.6rem;
-
-      .card {
-        padding: 1rem;
-
-        h2 {
-          font-size: 1.8rem;
-        }
-
-        p {
-          font-size: 0.85rem;
-        }
-      }
-    }
-
-    &__recent {
       padding: 1rem;
+      border-radius: 0.8rem;
+      background: linear-gradient(180deg, #fdf6f0, #f7efe5);
+      border: 0.05rem solid #eee;
 
-      .ticket {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
+      h4 {
+        font-size: 0.95rem;
+        color: #555;
+      }
 
-        span {
-          align-self: flex-end;
-        }
+      p {
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  &__section {
+    margin-top: 2rem;
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem;
+    }
+
+    .chatBox {
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+
+      .chatItem {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.9rem 1rem;
+        border-radius: 0.6rem;
+        background: #fff;
+        border: 0.05rem solid #eee;
       }
     }
   }
