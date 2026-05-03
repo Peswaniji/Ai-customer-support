@@ -7,6 +7,7 @@ import {
   customerSession,
   inviteAgent,
   setPassword,
+  getMe,
 } from "../controllers/auth.controller.js";
 import { protect } from "../middlewares/auth.middleware.js";
 import { validate } from "../middlewares/validate.middleware.js";
@@ -37,5 +38,5 @@ router.post("/refresh-token", refreshToken);
 router.post("/logout", protect, logout);
 router.post("/customer-session", customerSessionValidator, validate, customerSession);
 router.post("/invite-agent", protect, inviteLimiter, inviteAgentValidator, validate, inviteAgent);
-
+router.get("/me",protect,getMe )
 export default router;
