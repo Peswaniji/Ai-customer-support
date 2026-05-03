@@ -1,39 +1,18 @@
-import ticketApiInstance from "../../api/axios";
+import ticketApiInstance from "../../api/axios.js";
 
-// 🔵 Assigned tickets
-export const assignAgentTicket = async () => {
-  const response = await ticketApiInstance.get(
-    "/api/tickets"
-  );
-  return response.data;
+const ticketAPI = {
+  // Business Admin
+  getTickets: (filters) => ticketApiInstance.get("/api/tickets", { params: filters }),
+  getTicketById: (ticketId) => ticketApiInstance.get(`/api/tickets/${ticketId}`),
+  updateStatus: (ticketId, status) => ticketApiInstance.patch(`/api/tickets/${ticketId}/status`, { status }),
+  assignTicket: (ticketId, agentId) => ticketApiInstance.patch(`/api/tickets/${ticketId}/assign`, { agentId }),
+  updatePriority: (ticketId, priority) => ticketApiInstance.patch(`/api/tickets/${ticketId}/priority`, { priority }),
+
+  // Agent
+  getAssignedTickets: () => ticketApiInstance.get("/api/tickets"),
+  getActiveChats: () => ticketApiInstance.get("/api/tickets", { params: { status: "open" } }),
+  getInProgressTickets: () => ticketApiInstance.get("/api/tickets", { params: { status: "in_progress" } }),
+  resolveTicket: (ticketId) => ticketApiInstance.patch(`/api/tickets/${ticketId}/status`, { status: "resolved" }),
 };
 
-// 🟢 Active chats
-export const activeChatsForAgent = async () => {
-  const response = await ticketApiInstance.get(
-    "/api/tickets?status=open"
-  );
-  return response.data;
-};
-
-
-// 🟡 In progress
-export const progressTicketsForAgent = async () => {
-  const response = await ticketApiInstance.get(
-    "/api/tickets?status=in_progress"
-  );
-  return response.data;
-};
-
-
-// 🔴 Resolve ticket (CORRECT WAY)
-export const resolveTicket = async (ticketId) => {
-  const response = await ticketApiInstance.patch(
-    `/api/tickets/${ticketId}/status`,
-    {
-      status: "resolved",
-    }
-  );
-
-  return response.data;
-};
+export default ticketAPI;

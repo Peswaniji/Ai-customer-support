@@ -17,22 +17,27 @@ const Login = () => {
   const handleSubmit = async (e) => {
   e.preventDefault();
   try {
+    localStorage.removeItem("accessToken");
     const response = await handleLogin(form);
     console.log("Response from hook:", response);
 
     // Postman ke mutabiq yahan se token nikalye
     const token = response.accessToken; 
     const userData = response.user;
-
+    console.log(response)
     if (token) {
       localStorage.setItem("accessToken", token);
-      console.log("Token successfully stored in LocalStorage!");
+      console.log("Token successfully stored in LocalStorage!",);
       
       // Role check ke liye userData use karein
       if (userData?.role === 'agent') {
         navigate("/agent/dashboard");
+      } else if (userData?.role === 'super_admin') {
+        navigate("/super/dashboard");
+      } else if (userData?.role === 'business_admin') {
+        navigate("/admin/dashboard");
       } else {
-        navigate("/");
+        navigate("/admin/dashboard");
       }
     } else {
       console.error("AccessToken missing! Check if hook returns 'res.data'");

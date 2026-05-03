@@ -1,0 +1,42 @@
+@use "../../../shared/styles/variables" as *;
+@use "../../../shared/styles/mixins" as *;
+
+.dashboard {
+  &__header {
+    @include flex-between;
+    margin-bottom: 24px;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+
+    @media (max-width: 1200px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include tablet {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @include mobile {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  &__bottom {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 14px;
+
+    @include tablet {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__chart, &__usage {
+    @include card;
+  }
+}

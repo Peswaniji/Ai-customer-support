@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import "../styles/dashboard.scss";
-import { useTickets } from "../../tickets/hook/useTicket";
+import useTickets from "../../tickets/hooks/useTickets.js";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 

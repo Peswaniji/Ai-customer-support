@@ -1,0 +1,136 @@
+@use "../../../shared/styles/variables" as *;
+@use "../../../shared/styles/mixins" as *;
+
+.agents-page {
+  &__header {
+    @include flex-between;
+    margin-bottom: 24px;
+
+    @include mobile {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+
+      button { width: 100%; }
+    }
+  }
+}
+
+.agent-table {
+  background: white;
+  border-radius: 14px;
+  border: 1px solid $border-light;
+  overflow: hidden;
+
+  &__loading,
+  &__empty {
+    padding: 48px;
+    text-align: center;
+    color: $text-medium;
+    font-size: $font-sm;
+
+    span { font-size: 32px; display: block; margin-bottom: 8px; }
+  }
+
+  &__wrapper {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 580px;
+  }
+
+  thead tr {
+    border-bottom: 1px solid $border-light;
+    background: $primary-lighter;
+  }
+
+  th {
+    padding: 12px 20px;
+    text-align: left;
+    font-size: $font-xs;
+    color: $text-medium;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #fef3e2;
+    transition: background 0.15s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: $primary-lighter; }
+  }
+
+  td {
+    padding: 14px 20px;
+    font-size: $font-md;
+    color: $text-dark;
+    white-space: nowrap;
+  }
+
+  &__agent {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: $primary;
+    color: white;
+    font-size: $font-xs;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__name {
+    font-weight: 500;
+    color: $text-dark;
+  }
+
+  &__email {
+    color: $text-medium !important;
+    font-size: $font-sm !important;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+    margin-right: 4px;
+  }
+
+  &__toggle {
+    border: none;
+    border-radius: 8px;
+    padding: 6px 14px;
+    font-size: $font-xs;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &--deactivate {
+      background: $danger-bg;
+      color: $danger;
+    }
+
+    &--activate {
+      background: $online-bg;
+      color: $online;
+    }
+
+    &:hover { opacity: 0.8; }
+  }
+}

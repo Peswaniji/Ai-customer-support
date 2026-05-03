@@ -1,0 +1,46 @@
+@use "../../../shared/styles/variables" as *;
+@use "../../../shared/styles/mixins" as *;
+
+.ticket-filters {
+  @include flex-align;
+  gap: 10px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  &__select {
+    border: 1.5px solid $border-light;
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size: $font-sm;
+    font-weight: 500;
+    color: $text-dark;
+    background: white;
+    cursor: pointer;
+    min-width: 140px;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='%23854F0B'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+
+    &:focus {
+      border-color: $primary;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(245, 166, 35, 0.15);
+    }
+  }
+
+  &__clear {
+    border: 1.5px solid $danger-bg;
+    background: $danger-bg;
+    color: $danger;
+    border-radius: 10px;
+    padding: 9px 14px;
+    font-size: $font-sm;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 0.8; }
+  }
+}

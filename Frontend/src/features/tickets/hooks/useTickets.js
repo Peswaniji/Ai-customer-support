@@ -18,7 +18,7 @@ const useTickets = (autoFetch = false) => {
     tickets, activeTickets, inProgressTickets,
     resolvedTickets, selectedTicket,
     loading, error,
-  } = useSelector((state) => state.tickets);
+  } = useSelector((state) => state.ticket);
 
   const [filters, setFilters] = useState({ status: "", priority: "", page: 1, limit: 10 });
 
