@@ -5,12 +5,12 @@ import Ticket from "../models/ticket.model.js";
 export const getMessages = async (req, res) => {
   try {
     const { ticketId } = req.params;
-    const ticket = await Ticket.findById(ticketId);
+    const ticket = await Ticket.findById(ticketId).lean();
     if (!ticket) {
       return res.status(404).json({ success: false, message: "Ticket not found" });
     }
 
-    // Scope check
+    // Scope check — must belong to same business (except super_admin)
     if (
       req.user.role !== "super_admin" &&
       String(ticket.businessId) !== String(req.user.businessId)
@@ -18,11 +18,17 @@ export const getMessages = async (req, res) => {
       return res.status(403).json({ success: false, message: "Access denied" });
     }
 
+    // Customer can only read their own ticket messages
+    if (req.user.role === "customer" && String(ticket.customerId) !== String(req.user._id)) {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
     const filter = { ticketId };
     // Customers cannot see internal notes
     if (req.user.role === "customer") filter.isInternal = false;
 
-    const messages = await Message.find(filter).sort({ createdAt: 1 });
+    const messages = await Message.find(filter).sort({ createdAt: 1 }).lean();
+
     res.json({ success: true, messages });
   } catch (err) {
     console.error("getMessages:", err);
@@ -41,12 +47,32 @@ export const sendMessage = async (req, res) => {
       return res.status(404).json({ success: false, message: "Ticket not found" });
     }
 
+    // Scope check
+    if (
+      req.user.role !== "super_admin" &&
+      String(ticket.businessId) !== String(req.user.businessId)
+    ) {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    // Customer can only send to their own ticket
+    if (req.user.role === "customer" && String(ticket.customerId) !== String(req.user._id)) {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    // Customers cannot send internal notes
+    if (req.user.role === "customer" && isInternal) {
+      return res
+        .status(403)
+        .json({ success: false, message: "Customers cannot send internal notes" });
+    }
+
     const message = await Message.create({
       ticketId,
       businessId: ticket.businessId,
       senderId: req.user._id,
       senderRole: req.user.role,
-      content,
+      content: content.trim(),
       isInternal,
     });
 

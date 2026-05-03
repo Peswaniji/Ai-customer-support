@@ -6,7 +6,7 @@ import { getMessages, sendMessage } from "../controllers/message.controller.js";
 
 const router = express.Router();
 
-router.get("/:ticketId",  protect, messageParamValidator,  validate, getMessages);
-router.post("/:ticketId", protect, sendMessageValidator,   validate, sendMessage);
+router.get("/:ticketId", protect, messageParamValidator, validate, getMessages);
+router.post("/:ticketId", protect, sendMessageValidator, validate, sendMessage);
 
 export default router;

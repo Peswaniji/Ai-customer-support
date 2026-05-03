@@ -39,7 +39,7 @@ const seed = async () => {
     usage: { chatsThisMonth: 80 },
   });
 
-  const zomatoAdmin = await User.create({
+  await User.create({
     name: "Zomato Admin",
     email: "admin@zomato.demo.com",
     password: "demo1234",
@@ -123,7 +123,8 @@ const seed = async () => {
     status: "auto_resolved",
     aiHandled: true,
     aiConfidenceScore: 94,
-    aiSummary: "Customer asked about delivery hours. AI responded with operating hours (10 AM - 11 PM). Resolved instantly.",
+    aiSummary:
+      "Customer asked about delivery hours. AI responded with operating hours (10 AM - 11 PM). Resolved instantly.",
     customerRating: 5,
     resolvedAt: new Date(),
   });
@@ -139,12 +140,13 @@ const seed = async () => {
     status: "resolved",
     aiHandled: false,
     aiConfidenceScore: 40,
-    aiSummary: "Customer received wrong item. Agent arranged a re-delivery. Issue resolved in 22 minutes.",
+    aiSummary:
+      "Customer received wrong item. Agent arranged a re-delivery. Issue resolved in 22 minutes.",
     customerRating: 4,
     resolvedAt: new Date(Date.now() - 2 * 60 * 60 * 1000),
   });
 
-  const t5 = await Ticket.create({
+  await Ticket.create({
     businessId: zomato._id,
     customerId: customer1._id,
     subject: "App crashing on Android",
@@ -160,22 +162,86 @@ const seed = async () => {
   // ── Messages ─────────────────────────────────────────────
   await Message.insertMany([
     // Ticket 1 — in progress
-    { ticketId: t1._id, businessId: zomato._id, senderId: customer1._id, senderRole: "customer", content: "Hi, my order #4521 hasn't arrived. It was supposed to come at 6 PM." },
-    { ticketId: t1._id, businessId: zomato._id, senderId: "ai", senderRole: "ai", content: "I checked your order. It's out for delivery and should arrive by 8:30 PM due to traffic." },
-    { ticketId: t1._id, businessId: zomato._id, senderId: customer1._id, senderRole: "customer", content: "It is 9 PM now and still nothing!" },
-    { ticketId: t1._id, businessId: zomato._id, senderId: agent1._id, senderRole: "agent", content: "Hi Riya, I'm Arjun. I'm escalating this to our logistics team right now and will update you in 10 minutes." },
+    {
+      ticketId: t1._id,
+      businessId: zomato._id,
+      senderId: customer1._id,
+      senderRole: "customer",
+      content: "Hi, my order #4521 hasn't arrived. It was supposed to come at 6 PM.",
+    },
+    {
+      ticketId: t1._id,
+      businessId: zomato._id,
+      senderId: "ai",
+      senderRole: "ai",
+      content:
+        "I checked your order. It's out for delivery and should arrive by 8:30 PM due to traffic.",
+    },
+    {
+      ticketId: t1._id,
+      businessId: zomato._id,
+      senderId: customer1._id,
+      senderRole: "customer",
+      content: "It is 9 PM now and still nothing!",
+    },
+    {
+      ticketId: t1._id,
+      businessId: zomato._id,
+      senderId: agent1._id,
+      senderRole: "agent",
+      content:
+        "Hi Riya, I'm Arjun. I'm escalating this to our logistics team right now and will update you in 10 minutes.",
+    },
 
     // Ticket 2 — open
-    { ticketId: t2._id, businessId: zomato._id, senderId: customer2._id, senderRole: "customer", content: "I was charged twice for my order. Please check and refund." },
+    {
+      ticketId: t2._id,
+      businessId: zomato._id,
+      senderId: customer2._id,
+      senderRole: "customer",
+      content: "I was charged twice for my order. Please check and refund.",
+    },
 
     // Ticket 3 — auto resolved
-    { ticketId: t3._id, businessId: zomato._id, senderId: customer1._id, senderRole: "customer", content: "What are your delivery hours?" },
-    { ticketId: t3._id, businessId: zomato._id, senderId: "ai", senderRole: "ai", content: "We deliver from 10 AM to 11 PM every day including weekends and holidays! Is there anything else I can help you with?" },
+    {
+      ticketId: t3._id,
+      businessId: zomato._id,
+      senderId: customer1._id,
+      senderRole: "customer",
+      content: "What are your delivery hours?",
+    },
+    {
+      ticketId: t3._id,
+      businessId: zomato._id,
+      senderId: "ai",
+      senderRole: "ai",
+      content:
+        "We deliver from 10 AM to 11 PM every day including weekends and holidays! Is there anything else I can help you with?",
+    },
 
     // Ticket 4 — resolved
-    { ticketId: t4._id, businessId: zomato._id, senderId: customer2._id, senderRole: "customer", content: "I ordered Paneer Butter Masala but got Chicken Curry. I am vegetarian!" },
-    { ticketId: t4._id, businessId: zomato._id, senderId: agent2._id, senderRole: "agent", content: "I sincerely apologize for this! I am arranging an immediate re-delivery of your correct order. It will arrive within 30 minutes." },
-    { ticketId: t4._id, businessId: zomato._id, senderId: customer2._id, senderRole: "customer", content: "Thank you, received the correct order." },
+    {
+      ticketId: t4._id,
+      businessId: zomato._id,
+      senderId: customer2._id,
+      senderRole: "customer",
+      content: "I ordered Paneer Butter Masala but got Chicken Curry. I am vegetarian!",
+    },
+    {
+      ticketId: t4._id,
+      businessId: zomato._id,
+      senderId: agent2._id,
+      senderRole: "agent",
+      content:
+        "I sincerely apologize for this! I am arranging an immediate re-delivery of your correct order. It will arrive within 30 minutes.",
+    },
+    {
+      ticketId: t4._id,
+      businessId: zomato._id,
+      senderId: customer2._id,
+      senderRole: "customer",
+      content: "Thank you, received the correct order.",
+    },
   ]);
 
   console.log("💬 Messages seeded");
@@ -212,7 +278,7 @@ const seed = async () => {
   mongoose.connection.close();
 };
 
-seed().catch(err => {
+seed().catch((err) => {
   console.error("Seed failed:", err);
   mongoose.connection.close();
   process.exit(1);

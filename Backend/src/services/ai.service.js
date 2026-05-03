@@ -6,9 +6,36 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
-const ask = async (prompt) => {
-  const result = await model.generateContent(prompt);
-  return result.response.text().trim();
+// Helper with basic retry (max 2 retries on rate limit / transient errors)
+const ask = async (prompt, retries = 2) => {
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const result = await model.generateContent(prompt);
+      return result.response.text().trim();
+    } catch (err) {
+      const isRetryable =
+        err.status === 429 || // rate limit
+        err.status === 503 || // service unavailable
+        err.message?.includes("overloaded");
+
+      if (isRetryable && attempt < retries) {
+        const delay = Math.pow(2, attempt) * 1000; // exponential backoff: 1s, 2s
+        console.warn(`⚠️  Gemini API retry ${attempt + 1}/${retries} after ${delay}ms`);
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+};
+
+// Safe JSON parse — strips markdown code fences if model wraps response
+const safeParseJSON = (text) => {
+  const clean = text
+    .replace(/```json\s*/gi, "")
+    .replace(/```\s*/gi, "")
+    .trim();
+  return JSON.parse(clean);
 };
 
 // ── 1. CLASSIFY TICKET ────────────────────────────────────────
@@ -34,14 +61,26 @@ Rules:
 - priority: critical = service down, high = major issue, medium = partial issue, low = general query`;
 
   const text = await ask(prompt);
-  const clean = text.replace(/```json|```/g, "").trim();
-  return JSON.parse(clean);
+  const parsed = safeParseJSON(text);
+
+  // Validate required fields — fallback to safe defaults if AI returns unexpected shape
+  return {
+    canAutoResolve: Boolean(parsed.canAutoResolve),
+    confidence: Number(parsed.confidence) || 0,
+    category: ["billing", "technical", "general", "complaint", "delivery"].includes(parsed.category)
+      ? parsed.category
+      : "general",
+    priority: ["low", "medium", "high", "critical"].includes(parsed.priority)
+      ? parsed.priority
+      : "low",
+    suggestedReply: String(parsed.suggestedReply || ""),
+  };
 };
 
 // ── 2. REPLY SUGGESTIONS ──────────────────────────────────────
 export const getSuggestedReplies = async (ticketContext) => {
   const conversationText = ticketContext.messages
-    .map(m => `${m.senderRole.toUpperCase()}: ${m.content}`)
+    .map((m) => `${m.senderRole.toUpperCase()}: ${m.content}`)
     .join("\n");
 
   const prompt = `You are a helpful customer support AI. Based on this conversation, generate exactly 3 different suggested replies for the human support agent.
@@ -59,14 +98,23 @@ Requirements:
 ["reply1", "reply2", "reply3"]`;
 
   const text = await ask(prompt);
-  const clean = text.replace(/```json|```/g, "").trim();
-  return JSON.parse(clean);
+  const parsed = safeParseJSON(text);
+
+  // Ensure it's always an array of 3 strings
+  if (!Array.isArray(parsed) || parsed.length === 0) {
+    return [
+      "Thank you for reaching out. I understand your concern and will look into this right away.",
+      "I apologize for any inconvenience. Let me investigate this issue and get back to you shortly.",
+      "Thank you for your patience. I'm reviewing your case and will provide an update soon.",
+    ];
+  }
+  return parsed.slice(0, 3).map(String);
 };
 
 // ── 3. TICKET SUMMARY ─────────────────────────────────────────
 export const generateSummary = async (messages) => {
   const conversationText = messages
-    .map(m => `${m.senderRole.toUpperCase()}: ${m.content}`)
+    .map((m) => `${m.senderRole.toUpperCase()}: ${m.content}`)
     .join("\n");
 
   const prompt = `Summarize this customer support conversation in exactly 2-3 sentences.
