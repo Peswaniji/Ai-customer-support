@@ -2,9 +2,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import nodemailer from "nodemailer";
+import { createConnection } from "net";
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",      // service ki jagah host use karo
+  port: 465,
+  secure: true,                // SSL
+  family: 4,                   // ← Force IPv4
   auth: {
     type: "OAuth2",
     user: process.env.GOOGLE_USER,
