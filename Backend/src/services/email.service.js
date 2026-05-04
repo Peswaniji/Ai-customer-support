@@ -5,10 +5,10 @@ import nodemailer from "nodemailer";
 import { createConnection } from "net";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",      // service ki jagah host use karo
-  port: 465,
-  secure: true,                // SSL
-  family: 4,                   // ← Force IPv4
+  host: "smtp.gmail.com",
+  port: 587,          // ← 465 se 587 karo
+  secure: false,      // ← true se false karo
+  family: 4,
   auth: {
     type: "OAuth2",
     user: process.env.GOOGLE_USER,
