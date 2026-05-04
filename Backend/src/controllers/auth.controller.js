@@ -306,10 +306,9 @@ export const inviteAgent = async (req, res) => {
       inviteExpiry,
     });
 
-    sendInviteEmail(email, name, inviteToken).catch((err) => {
-      console.error("Invite email failed (non-critical):", err.message);
-    });
-
+   sendInviteEmail(email, name, inviteToken).catch((err) => {
+  console.error("❌ Invite email failed:", err.message);
+});
     res.status(201).json({
       success: true,
       message: "Invite sent",
