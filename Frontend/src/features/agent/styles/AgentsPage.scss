@@ -15,3 +15,56 @@
     }
   }
 }
+
+.agent-detail {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.35);
+}
+
+.agent-detail__card {
+  width: min(100%, 440px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1.5rem;
+  border-radius: 14px;
+  background: #fff;
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  p {
+    color: #777;
+  }
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.7rem;
+    border-top: 1px solid #f3e8db;
+
+    strong {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+}
+
+.agent-detail__close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+}

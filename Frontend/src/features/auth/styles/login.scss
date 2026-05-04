@@ -73,14 +73,38 @@
       &:hover {
         background: #ff9f1c;
       }
+
+      &:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
     }
+  }
+
+  &__error {
+    margin-bottom: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 13px;
+    text-align: center;
   }
 
   .switch {
     margin-top: 15px;
     text-align: center;
-    color: #ff9f1c;
-    cursor: pointer;
+    color: #555;
     font-size: 14px;
+
+    a {
+      color: #ff9f1c;
+      font-weight: 600;
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
   }
 }

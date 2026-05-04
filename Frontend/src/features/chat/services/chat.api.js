@@ -7,10 +7,10 @@ export const fetchMessageHistory = async (ticketId) => {
 };
 
 // 2. Naya message bhejne ke liye
-export const sendMessageApi = async (ticketId, content) => {
+export const sendMessageApi = async (ticketId, content, isInternal = false) => {
   const response = await ticketApiInstance.post(`/api/messages/${ticketId}`, {
     content,
-    isInternal: false,
+    isInternal,
   });
   return response.data;
 };

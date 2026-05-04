@@ -30,9 +30,9 @@ export const useChat = () => {
   };
 
   // 2. Message send karne ke liye
-  const sendMessage = async (ticketId, content) => {
+  const sendMessage = async (ticketId, content, isInternal = false) => {
     try {
-      const data = await sendMessageApi(ticketId, content);
+      const data = await sendMessageApi(ticketId, content, isInternal);
       
       // Send hote hi local state update kar dein taaki user ko turant dikhe
       dispatch(appendMessage(data.message || data));
@@ -40,6 +40,10 @@ export const useChat = () => {
     } catch (err) {
       dispatch(setChatError(err.message));
     }
+  };
+
+  const addMessage = (message) => {
+    dispatch(appendMessage(message));
   };
 
   // 3. AI Suggestion fetch karne ke liye
@@ -58,6 +62,8 @@ export const useChat = () => {
     aiSuggestion,
     getMessages,
     sendMessage,
-    fetchSuggestion
+    fetchSuggestion,
+    addMessage,
+    setAiSuggestion: (suggestion) => dispatch(setAiSuggestion(suggestion)),
   };
 };

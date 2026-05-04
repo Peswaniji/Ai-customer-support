@@ -1,23 +1,42 @@
-import axios from 'axios'
+import api from "../../../shared/services/axios.js";
 
-const authApiInstance = axios.create({
-    baseURL:'http://localhost:8001',
-    withCredentials:true
-})
+export const register = async ({ businessName, email, password, industry }) => {
+  const response = await api.post("/auth/register-business", {
+    businessName,
+    email,
+    password,
+    industry,
+  });
 
-export const register = async({businessName,email,password,industry})=>{
-   const response = await authApiInstance.post('/api/auth/register-business',{
-    businessName,email,password,industry})
-   console.log(response);
-   
-   return response.data
-}
-export const login = async({email,password})=>{
-    const response = await authApiInstance.post('/api/auth/login',{email,password})
-    return response.data
-}
+  return response.data;
+};
 
-export const getMe = async()=>{
-    const response = await authApiInstance.post('/api/business/me')
-    return response.data
-}
+export const login = async ({ email, password }) => {
+  const response = await api.post("/auth/login", { email, password });
+  return response.data;
+};
+
+export const logout = async () => {
+  const response = await api.post("/auth/logout");
+  return response.data;
+};
+
+export const refreshToken = async () => {
+  const response = await api.post("/auth/refresh-token");
+  return response.data;
+};
+
+export const customerSession = async ({ name, email, businessId }) => {
+  const response = await api.post("/auth/customer-session", { name, email, businessId });
+  return response.data;
+};
+
+export const setPassword = async ({ token, password }) => {
+  const response = await api.post("/auth/set-password", { token, password });
+  return response.data;
+};
+
+export const getMe = async () => {
+  const response = await api.get("/auth/me");
+  return response.data;
+};

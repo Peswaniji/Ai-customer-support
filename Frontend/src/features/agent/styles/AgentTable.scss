@@ -94,8 +94,14 @@
   }
 
   &__name {
+    border: 0;
+    background: transparent;
+    padding: 0;
     font-weight: 500;
     color: $text-dark;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
   }
 
   &__email {

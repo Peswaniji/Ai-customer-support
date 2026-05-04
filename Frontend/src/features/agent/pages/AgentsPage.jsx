@@ -7,6 +7,7 @@ import "../styles/AgentsPage.scss";
 const AgentsPage = () => {
   const { agents, loading } = useAgents();
   const [showModal, setShowModal] = useState(false);
+  const [selectedAgent, setSelectedAgent] = useState(null);
 
   return (
     <div className="agents-page">
@@ -24,10 +25,38 @@ const AgentsPage = () => {
         </button>
       </div>
 
-      <AgentTable agents={agents} loading={loading} />
+      <AgentTable agents={agents} loading={loading} onSelectAgent={setSelectedAgent} />
 
       {showModal && (
         <InviteAgentModal onClose={() => setShowModal(false)} />
+      )}
+
+      {selectedAgent && (
+        <div className="agent-detail" onClick={() => setSelectedAgent(null)}>
+          <div className="agent-detail__card" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              className="agent-detail__close"
+              onClick={() => setSelectedAgent(null)}
+            >
+              X
+            </button>
+            <h2>{selectedAgent.name}</h2>
+            <p>{selectedAgent.email}</p>
+            <div>
+              <span>Status</span>
+              <strong>{selectedAgent.isActive ? "Active" : "Inactive"}</strong>
+            </div>
+            <div>
+              <span>Availability</span>
+              <strong>{selectedAgent.availabilityStatus || "available"}</strong>
+            </div>
+            <div>
+              <span>Agent ID</span>
+              <strong>{selectedAgent._id}</strong>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

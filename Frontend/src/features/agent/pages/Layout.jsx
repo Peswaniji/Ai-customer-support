@@ -1,20 +1,31 @@
 import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../auth/state/auth.slice.js";
+import { getMe } from "../../auth/services/auth.api.js";
 import AgentSidebar from "../components/AgentSidebar";
+import "../styles/agentLayout.scss";
 
 const Layout = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    getMe()
+      .then((data) => {
+        if (data.user) dispatch(setUser(data.user));
+      })
+      .catch(() => {});
+  }, [dispatch]);
+
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
-      
-      {/* Sidebar */}
-      <div style={{ width: "250px", flexShrink: 0 }}>
+    <div className="agent-layout">
+      <aside className="agent-layout__sidebar">
         <AgentSidebar />
-      </div>
+      </aside>
 
-      {/* Main content */}
-      <div style={{ flex: 1, overflow: "auto", paddingInline: "2.5rem"  }}>
+      <main className="agent-layout__main">
         <Outlet />
-      </div>
-
+      </main>
     </div>
   );
 };

@@ -38,5 +38,5 @@ router.post("/refresh-token", refreshToken);
 router.post("/logout", protect, logout);
 router.post("/customer-session", customerSessionValidator, validate, customerSession);
 router.post("/invite-agent", protect, inviteLimiter, inviteAgentValidator, validate, inviteAgent);
-router.get("/me",protect,getMe )
+router.get("/me", protect, getMe);
 export default router;

@@ -1,7 +1,7 @@
 import useAgents from "../hooks/useAgents.js";
 import "../styles/AgentTable.scss";
 
-const AgentTable = ({ agents, loading }) => {
+const AgentTable = ({ agents, loading, onSelectAgent }) => {
   const { toggleStatus } = useAgents();
 
   const getInitials = (name) => {
@@ -48,7 +48,13 @@ const AgentTable = ({ agents, loading }) => {
                         <div className="agent-table__avatar">
                         {getInitials(agent.name)}
                         </div>
-                        <span className="agent-table__name">{agent.name}</span>
+                        <button
+                          className="agent-table__name"
+                          type="button"
+                          onClick={() => onSelectAgent?.(agent)}
+                        >
+                          {agent.name}
+                        </button>
                     </div>
                 </td>
                 <td className="agent-table__email">{agent.email}</td>

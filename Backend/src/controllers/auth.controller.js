@@ -368,7 +368,7 @@ export const setPassword = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    res.json({ success: true, user: req.user })  // ✅ directly req.user return karo
+    res.json({ success: true, user: req.user }); // ✅ directly req.user return karo
   } catch (err) {
     console.error("getMe:", err);
     res.status(500).json({ success: false, message: "Failed to fetch user" });

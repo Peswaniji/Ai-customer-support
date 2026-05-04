@@ -3,7 +3,8 @@ import useSettings from "../hooks/useSettings.js";
 import "../styles/SettingsPage.scss";
 
 const SettingsPage = () => {
-  const { business, widgetCode, loading, updateLoading, updateSuccess, update, resetSuccess } = useSettings();
+  const { business, widgetCode, loading, updateLoading, updateSuccess, error, update, resetSuccess } =
+    useSettings();
 
   const [form, setForm] = useState({
     name: "",
@@ -57,9 +58,13 @@ const SettingsPage = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    update(form);
+    try {
+      await update(form);
+    } catch {
+      // Error is stored in Redux and rendered below the form.
+    }
   };
 
   const handleCopy = () => {
@@ -99,7 +104,7 @@ const SettingsPage = () => {
               <label>Widget Color</label>
               <div className="settings-card__color-row">
                 <input type="color" name="color" value={form.widgetConfig.color} onChange={handleWidgetChange} className="settings-card__color-picker" />
-                <input type="text" name="color" value={form.widgetConfig.color} onChange={handleWidgetChange} placeholder="#1E40AF" className="settings-card__color-text" />
+                <input type="text" name="color" value={form.widgetConfig.color} onChange={handleWidgetChange} placeholder="#1E40AF" pattern="^#[0-9A-Fa-f]{6}$" maxLength={7} className="settings-card__color-text" />
               </div>
             </div>
 
@@ -129,6 +134,8 @@ const SettingsPage = () => {
           {updateSuccess && (
             <div className="settings-page__success">✅ Settings updated successfully!</div>
           )}
+
+          {error && <div className="settings-page__error">{error}</div>}
 
           <button type="submit" className="btn-primary settings-page__save-btn" disabled={updateLoading}>
             {updateLoading ? "Saving..." : "Save Changes"}

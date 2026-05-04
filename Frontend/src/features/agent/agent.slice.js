@@ -37,6 +37,18 @@ export const updateAgentStatus = createAsyncThunk(
   }
 );
 
+export const updateAvailability = createAsyncThunk(
+  "agents/updateAvailability",
+  async (availabilityStatus, { rejectWithValue }) => {
+    try {
+      const res = await agentAPI.updateAvailability(availabilityStatus);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed");
+    }
+  }
+);
+
 const agentSlice = createSlice({
   name: "agents",
   initialState: {
@@ -44,6 +56,7 @@ const agentSlice = createSlice({
     loading: false,
     error: null,
     inviteSuccess: false,
+    availabilityStatus: null,
   },
   reducers: {
     resetInviteSuccess: (state) => {
@@ -80,6 +93,9 @@ const agentSlice = createSlice({
         const updated = action.payload.agent;
         const index = state.agents.findIndex((a) => a._id === updated._id);
         if (index !== -1) state.agents[index] = updated;
+      })
+      .addCase(updateAvailability.fulfilled, (state, action) => {
+        state.availabilityStatus = action.payload.availabilityStatus;
       });
   },
 });

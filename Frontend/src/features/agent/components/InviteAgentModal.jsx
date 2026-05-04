@@ -13,9 +13,9 @@ const InviteAgentModal = ({ onClose }) => {
     }
   }, [inviteSuccess]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    invite(form);
+    await invite(form);
   };
 
   return (

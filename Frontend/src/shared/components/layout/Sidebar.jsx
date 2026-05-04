@@ -2,6 +2,8 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "../../../shared/styles/Sidebar.scss";
+import { logout } from "../../../features/auth/services/auth.api.js";
+import { clearAuth } from "../../../features/auth/state/auth.slice.js";
 
 const navItems = [
   {
@@ -58,7 +60,13 @@ const Sidebar = ({ mobileOpen, setMobileOpen }) => {
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
 
   const handleLogout = async () => {
-    await dispatch(logoutUser());
+    try {
+      await logout();
+    } catch (_err) {
+      // Local logout still happens if the server session has already expired.
+    }
+    localStorage.removeItem("accessToken");
+    dispatch(clearAuth());
     navigate("/login");
   };
 

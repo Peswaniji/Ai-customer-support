@@ -18,7 +18,11 @@ export const updateBusinessInfo = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await settingsAPI.updateBusinessInfo(data);
-      return res.data;
+      const widgetRes = await settingsAPI.getWidgetCode();
+      return {
+        ...res.data,
+        snippet: widgetRes.data.snippet,
+      };
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Failed");
     }
@@ -37,11 +41,49 @@ export const fetchWidgetCode = createAsyncThunk(
   }
 );
 
+export const fetchUsage = createAsyncThunk(
+  "settings/fetchUsage",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await settingsAPI.getUsage();
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed");
+    }
+  }
+);
+
+export const fetchPlans = createAsyncThunk(
+  "settings/fetchPlans",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await settingsAPI.getPlans();
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed");
+    }
+  }
+);
+
+export const upgradePlan = createAsyncThunk(
+  "settings/upgradePlan",
+  async (plan, { rejectWithValue }) => {
+    try {
+      const res = await settingsAPI.upgradePlan(plan);
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || "Failed");
+    }
+  }
+);
+
 const settingsSlice = createSlice({
   name: "settings",
   initialState: {
     business: null,
     widgetCode: null,
+    usage: null,
+    plans: [],
     loading: false,
     updateLoading: false,
     updateSuccess: false,
@@ -75,6 +117,9 @@ const settingsSlice = createSlice({
         state.updateLoading = false;
         state.updateSuccess = true;
         state.business = action.payload.business;
+        if (action.payload.snippet) {
+          state.widgetCode = action.payload.snippet;
+        }
       })
       .addCase(updateBusinessInfo.rejected, (state, action) => {
         state.updateLoading = false;
@@ -82,6 +127,19 @@ const settingsSlice = createSlice({
       })
       .addCase(fetchWidgetCode.fulfilled, (state, action) => {
         state.widgetCode = action.payload.snippet;
+      })
+      .addCase(fetchUsage.fulfilled, (state, action) => {
+        state.usage = action.payload.usage;
+      })
+      .addCase(fetchPlans.fulfilled, (state, action) => {
+        state.plans = action.payload.plans;
+      })
+      .addCase(upgradePlan.fulfilled, (state, action) => {
+        state.business = {
+          ...(state.business || {}),
+          ...action.payload.business,
+        };
+        state.updateSuccess = true;
       });
   },
 });

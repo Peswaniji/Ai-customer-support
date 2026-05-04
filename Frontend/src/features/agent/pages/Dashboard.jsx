@@ -1,21 +1,16 @@
-import React from "react";
-import { useEffect } from "react";
-import "../styles/dashboard.scss";
-import useTickets from "../../tickets/hooks/useTickets.js";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import useTickets from "../../tickets/hooks/useTickets.js";
+import "../styles/dashboard.scss";
 
 const Dashboard = () => {
-    const navigate = useNavigate()
-  const {
-    getAssignedTickets,
-    getActiveChats,
-    getInProgressTickets,
-  } = useTickets();
+  const navigate = useNavigate();
+  const { getAssignedTickets, getActiveChats, getInProgressTickets } =
+    useTickets();
 
-  const { tickets, activeTickets } = useSelector(
-    (state) => state.ticket
-  );
+  const { tickets, activeTickets } = useSelector((state) => state.ticket);
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     getAssignedTickets();
@@ -23,11 +18,13 @@ const Dashboard = () => {
     getInProgressTickets();
   }, []);
 
-  // 🟢 ADDED LOGIC: 'open' aur 'in_progress' dono tickets ko yahan merge kiya hai
-  // Isse "No active chats" wali problem solve ho jayegi kyunki combined list render hogi
   const combinedActiveChats = [
     ...(activeTickets || []),
-    ...(tickets?.filter((t) => t.status === "in_progress" && !activeTickets.find(at => at._id === t._id)) || [])
+    ...(tickets?.filter(
+      (ticket) =>
+        ticket.status === "in_progress" &&
+        !activeTickets.find((activeTicket) => activeTicket._id === ticket._id)
+    ) || []),
   ];
 
   function openChat(ticketId) {
@@ -36,9 +33,13 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      <h2 className="dashboard__title">Dashboard</h2>
+      <div className="dashboard__hero">
+        <div>
+          <h2 className="dashboard__title">Dashboard</h2>
+          <p>Welcome back, {user?.name || "Agent"}</p>
+        </div>
+      </div>
 
-      {/* Cards */}
       <div className="dashboard__cards">
         <div className="card">
           <h4>Assigned Tickets</h4>
@@ -47,48 +48,45 @@ const Dashboard = () => {
 
         <div className="card">
           <h4>Active Chats</h4>
-          {/* Dashboard UI consistency ke liye yahan bhi combined count use kar sakte hain */}
           <p>{combinedActiveChats.length || 0}</p>
         </div>
 
         <div className="card">
           <h4>In Progress</h4>
-          <p>
-            {tickets?.filter((t) => t.status === "in_progress")
-              ?.length || 0}
-          </p>
+          <p>{tickets?.filter((t) => t.status === "in_progress")?.length || 0}</p>
         </div>
 
         <div className="card">
           <h4>Resolved Today</h4>
-          <p>
-            {tickets?.filter((t) => t.status === "resolved")
-              ?.length || 0}
-          </p>
+          <p>{tickets?.filter((t) => t.status === "resolved")?.length || 0}</p>
         </div>
       </div>
 
-      {/* Active Chats Section */}
-      <div className="dashboard__section">
+      <section className="dashboard__section">
         <h3>Active Chats</h3>
 
         <div className="chatBox">
-          {/* 🟢 CHANGE: Ab yahan 'combinedActiveChats' map ho raha hai */}
           {combinedActiveChats.length > 0 ? (
             combinedActiveChats.map((chat) => (
-              <div className="chatItem" key={chat._id} onClick={() => openChat(chat._id)}>
-                <span>{chat.customerId?.name || "Unknown Customer"}</span>
-                <br />
-                <small>{chat.subject}</small>
-                {/* Status badge dikhane ke liye (optional) */}
-                <div className={`status-dot ${chat.status}`}></div>
-              </div>
+              <button
+                className="chatItem"
+                key={chat._id}
+                type="button"
+                onClick={() => openChat(chat._id)}
+              >
+                <span className="chatItem__customer">
+                  {chat.customerId?.name || "Unknown Customer"}
+                </span>
+                <span className="chatItem__subject">{chat.subject}</span>
+                <span className="chatItem__meta">{chat.status}</span>
+                <span className={`status-dot ${chat.status}`} />
+              </button>
             ))
           ) : (
-            <p>No active chats</p>
+            <p className="chatBox__empty">No active chats</p>
           )}
         </div>
-      </div>
+      </section>
     </div>
   );
 };

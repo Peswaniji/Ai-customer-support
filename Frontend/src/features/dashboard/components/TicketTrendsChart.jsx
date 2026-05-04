@@ -10,6 +10,8 @@ const TicketTrendsChart = ({ trends, loading }) => {
       <h3 className="trends-chart__title">Ticket Trends</h3>
       {loading ? (
         <div className="trends-chart__loading">Loading chart...</div>
+      ) : !trends?.length ? (
+        <div className="trends-chart__loading">No ticket activity in the last 30 days.</div>
       ) : (
         <ResponsiveContainer width="100%" height={240}>
           <LineChart data={trends}>

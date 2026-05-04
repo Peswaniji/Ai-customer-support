@@ -30,6 +30,7 @@ app.use(
         scriptSrc: ["'self'", "'unsafe-inline'", "cdn.socket.io"],
         frameAncestors: [
           "'self'",
+          "*",
           "http://localhost:3001",
           "http://localhost:5173",
           "http://localhost:3000",
@@ -52,17 +53,25 @@ const allowedOrigins = [
   "http://localhost:3000",
 ];
 
-app.use(
-  cors({
+const isPublicWidgetRequest = (req) =>
+  req.path.startsWith("/api/widget/") ||
+  req.path === "/api/auth/customer-session" ||
+  (req.path === "/api/tickets" && req.method === "POST");
+
+app.use((req, res, next) => {
+  const corsOptions = {
     credentials: true,
     origin: (origin, callback) => {
       // Allow requests with no origin (e.g. mobile apps, Postman, server-to-server)
       if (!origin) return callback(null, true);
+      if (isPublicWidgetRequest(req)) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
     },
-  })
-);
+  };
+
+  return cors(corsOptions)(req, res, next);
+});
 
 // Global rate limiter — prevents DDoS on all routes (100 req/min per IP)
 const globalLimiter = rateLimit({

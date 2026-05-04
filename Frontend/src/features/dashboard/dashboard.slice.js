@@ -14,10 +14,36 @@ export const fetchMyBusiness = createAsyncThunk(
   }
 );
 
+export const fetchDashboardOverview = createAsyncThunk(
+  "dashboard/fetchOverview",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await ticketApiInstance.get("/api/analytics/overview");
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message || "Failed to load overview");
+    }
+  }
+);
+
+export const fetchDashboardTrends = createAsyncThunk(
+  "dashboard/fetchTrends",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await ticketApiInstance.get("/api/analytics/trends");
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message || "Failed to load trends");
+    }
+  }
+);
+
 const dashboardSlice = createSlice({
   name: "dashboard",
   initialState: {
     business: null,
+    overview: null,
+    trends: [],
     loading: false,
     error: null,
   },
@@ -31,12 +57,27 @@ const dashboardSlice = createSlice({
         state.loading = false;
         // Handle both response formats
         state.business = action.payload?.business || action.payload?.data || action.payload;
-        console.log("Business data loaded:", state.business);
       })
       .addCase(fetchMyBusiness.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
         console.error("Failed to fetch business:", action.payload);
+      })
+      .addCase(fetchDashboardOverview.fulfilled, (state, action) => {
+        state.overview = action.payload.data;
+      })
+      .addCase(fetchDashboardOverview.rejected, (state, action) => {
+        state.error = action.payload;
+      })
+      .addCase(fetchDashboardTrends.fulfilled, (state, action) => {
+        state.trends = (action.payload.trends || []).map((item) => ({
+          date: item.date || item._id,
+          count: item.count || 0,
+          resolved: item.resolved || 0,
+        }));
+      })
+      .addCase(fetchDashboardTrends.rejected, (state, action) => {
+        state.error = action.payload;
       });
   },
 });

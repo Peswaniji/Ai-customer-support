@@ -67,8 +67,9 @@ export const getWidgetCode = async (req, res) => {
     const proto = req.headers["x-forwarded-proto"] || (req.secure ? "https" : req.protocol);
     const baseUrl = `${proto}://${req.get("host")}`;
 
+    const cacheVersion = business.updatedAt ? new Date(business.updatedAt).getTime() : Date.now();
     const snippet = `<script
-  src="${baseUrl}/api/widget/${business._id}/loader.js"
+  src="${baseUrl}/api/widget/${business._id}/loader.js?v=${cacheVersion}"
   data-business-id="${business._id}"
   data-color="${business.widgetConfig.color}"
   data-welcome="${business.widgetConfig.welcomeMessage}"

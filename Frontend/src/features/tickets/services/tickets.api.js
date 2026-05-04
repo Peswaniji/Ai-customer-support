@@ -1,6 +1,8 @@
 import ticketApiInstance from "../../api/axios.js";
 
 const ticketAPI = {
+  createTicket: (data) => ticketApiInstance.post("/api/tickets", data),
+
   // Business Admin
   getTickets: (filters) => ticketApiInstance.get("/api/tickets", { params: filters }),
   getTicketById: (ticketId) => ticketApiInstance.get(`/api/tickets/${ticketId}`),
@@ -13,6 +15,7 @@ const ticketAPI = {
   getActiveChats: () => ticketApiInstance.get("/api/tickets", { params: { status: "open" } }),
   getInProgressTickets: () => ticketApiInstance.get("/api/tickets", { params: { status: "in_progress" } }),
   resolveTicket: (ticketId) => ticketApiInstance.patch(`/api/tickets/${ticketId}/status`, { status: "resolved" }),
+  rateTicket: (ticketId, rating) => ticketApiInstance.post(`/api/tickets/${ticketId}/rate`, { rating }),
 };
 
 export default ticketAPI;

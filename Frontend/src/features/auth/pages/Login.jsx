@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/login.scss";
 import { useAuth } from "../hooks/useAuth";
 
 const Login = () => {
-    const {handleLogin} = useAuth()
-  const [isLogin, setIsLogin] = useState(true);
+  const {handleLogin} = useAuth()
   const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -16,24 +17,21 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
   e.preventDefault();
+  setError("");
+  setLoading(true);
   try {
     localStorage.removeItem("accessToken");
     const response = await handleLogin(form);
-    console.log("Response from hook:", response);
 
-    // Postman ke mutabiq yahan se token nikalye
     const token = response.accessToken; 
     const userData = response.user;
-    console.log(response)
     if (token) {
       localStorage.setItem("accessToken", token);
-      console.log("Token successfully stored in LocalStorage!",);
-      
-      // Role check ke liye userData use karein
+
       if (userData?.role === 'agent') {
         navigate("/agent/dashboard");
       } else if (userData?.role === 'super_admin') {
-        navigate("/super/dashboard");
+        navigate("/superadmin/dashboard");
       } else if (userData?.role === 'business_admin') {
         navigate("/admin/dashboard");
       } else {
@@ -44,6 +42,9 @@ const Login = () => {
     }
   } catch (error) {
     console.error("Login Error:", error);
+    setError(error.response?.data?.message || "Login failed. Please try again.");
+  } finally {
+    setLoading(false);
   }
 };
 
@@ -56,7 +57,8 @@ const Login = () => {
 
       <div className="auth-right">
         <div className="card">
-          <h2>{isLogin ? "Login" : "Register"}</h2>
+          <h2>Login</h2>
+          {error && <div className="card__error">{error}</div>}
 
           <form onSubmit={handleSubmit}>
             <input
@@ -73,15 +75,13 @@ const Login = () => {
               onChange={handleChange}
             />
 
-            <button type="submit">
-              {isLogin ? "Login" : "Register"}
+            <button type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
-          <p onClick={() => setIsLogin(!isLogin)} className="switch">
-            {isLogin
-              ? "Don't have an account? Register"
-              : "Already have an account? Login"}
+          <p className="switch">
+            Don't have an account? <Link to="/register">Register</Link>
           </p>
         </div>
       </div>

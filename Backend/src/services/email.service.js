@@ -39,7 +39,7 @@ export const sendWelcomeEmail = async (to, businessName) => {
 };
 
 export const sendInviteEmail = async (to, agentName, inviteToken) => {
-  const link = `${process.env.CLIENT_URL}/auth/set-password?token=${inviteToken}`;
+  const link = `${process.env.CLIENT_URL}/set-password?token=${inviteToken}`;
   await transporter.sendMail({
     from: `"SupportAI" <${process.env.GOOGLE_USER}>`,
     to,

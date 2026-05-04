@@ -1,7 +1,11 @@
 import axios from "axios";
 
+const API_ORIGIN =
+  import.meta.env.VITE_SOCKET_URL ||
+  (import.meta.env.VITE_API_URL || "https://ai-csp-backend.onrender.com/api").replace(/\/api\/?$/, "");
+
 const ticketApiInstance = axios.create({
-  baseURL: "http://localhost:8001",
+  baseURL: API_ORIGIN,
   withCredentials: true,
 });
 

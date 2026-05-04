@@ -44,6 +44,15 @@
     font-weight: 500;
   }
 
+  &__error {
+    background: $danger-bg;
+    color: $danger;
+    padding: 10px 14px;
+    border-radius: $radius-sm;
+    font-size: $font-sm;
+    font-weight: 500;
+  }
+
   &__save-btn {
     width: 100%;
     padding: 12px;
