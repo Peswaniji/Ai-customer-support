@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import ProtectedRoute from './ProtectedRoute.jsx'
+import RouteError from './RouteError.jsx'
 
 const Login = lazy(() => import('../features/auth/pages/Login'))
 const Register = lazy(() => import('../features/auth/pages/Register'))
@@ -31,23 +32,28 @@ const withSuspense = (element) => (
 export const routes = createBrowserRouter([
     {
         path: '/',
-        element: <Navigate to="/login" replace />
+        element: <Navigate to="/login" replace />,
+        errorElement: <RouteError />
     },
     {
         path: '/login',
-        element: withSuspense(<Login />)
+        element: withSuspense(<Login />),
+        errorElement: <RouteError />
     },
     {
         path: '/register',
-        element: withSuspense(<Register />)
+        element: withSuspense(<Register />),
+        errorElement: <RouteError />
     },
     {
         path: '/set-password',
-        element: withSuspense(<SetPassword />)
+        element: withSuspense(<SetPassword />),
+        errorElement: <RouteError />
     },
     {
         path: '/widget',
-        element: withSuspense(<WidgetPage />)
+        element: withSuspense(<WidgetPage />),
+        errorElement: <RouteError />
     },
 
     // Business Admin routes
@@ -58,6 +64,7 @@ export const routes = createBrowserRouter([
                 <AdminLayout />
             </ProtectedRoute>
         ),
+        errorElement: <RouteError />,
         children: [
             {
                 index: true,
@@ -98,6 +105,7 @@ export const routes = createBrowserRouter([
                 <Layout />
             </ProtectedRoute>
         ),
+        errorElement: <RouteError />,
         children: [
             {
                 index: true,
@@ -141,12 +149,14 @@ export const routes = createBrowserRouter([
             <ProtectedRoute roles={['super_admin']}>
                 <PlatformStats />
             </ProtectedRoute>
-        )
+        ),
+        errorElement: <RouteError />
     },
 
     // 404
     {
         path: '*',
-        element: <Navigate to="/login" replace />
+        element: <Navigate to="/login" replace />,
+        errorElement: <RouteError />
     }
 ])
