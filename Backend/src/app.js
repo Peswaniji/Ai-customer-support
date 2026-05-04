@@ -49,9 +49,22 @@ app.use(cookieParser());
 // CORS — scoped to allowed origins only
 const allowedOrigins = [
   process.env.CLIENT_URL || "http://localhost:5173",
+  ...(process.env.CLIENT_URLS || "")
+    .split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   "http://localhost:3001",
   "http://localhost:3000",
 ];
+
+const isAllowedVercelOrigin = (origin) => {
+  try {
+    const { hostname, protocol } = new URL(origin);
+    return protocol === "https:" && hostname.endsWith(".vercel.app");
+  } catch {
+    return false;
+  }
+};
 
 const isPublicWidgetRequest = (req) =>
   req.path.startsWith("/api/widget/") ||
@@ -66,6 +79,7 @@ app.use((req, res, next) => {
       if (!origin) return callback(null, true);
       if (isPublicWidgetRequest(req)) return callback(null, true);
       if (allowedOrigins.includes(origin)) return callback(null, true);
+      if (isAllowedVercelOrigin(origin)) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
     },
   };

@@ -7,6 +7,7 @@ const API_ORIGIN =
 const ticketApiInstance = axios.create({
   baseURL: API_ORIGIN,
   withCredentials: true,
+  timeout: 20000,
 });
 
 // 🔥 ADD THIS (VERY IMPORTANT)

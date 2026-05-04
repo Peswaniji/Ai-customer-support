@@ -15,7 +15,11 @@ const InviteAgentModal = ({ onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await invite(form);
+    try {
+      await invite(form);
+    } catch {
+      // Error is stored in Redux and rendered in the modal.
+    }
   };
 
   return (
