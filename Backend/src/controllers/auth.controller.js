@@ -306,9 +306,16 @@ export const inviteAgent = async (req, res) => {
       inviteExpiry,
     });
 
-    sendInviteEmail(email, name, inviteToken).catch((err) => {
-      console.error("Invite email failed (non-critical):", err.message);
-    });
+    try {
+      await sendInviteEmail(email, name, inviteToken);
+    } catch (err) {
+      await User.deleteOne({ _id: agent._id });
+      console.error("Invite email failed:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Failed to send invite email. Please check email configuration.",
+      });
+    }
 
     res.status(201).json({
       success: true,
