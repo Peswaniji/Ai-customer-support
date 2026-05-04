@@ -4,14 +4,7 @@ dotenv.config();
 import nodemailer from "nodemailer";
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
-  family: 4,
-  requireTLS: true,
-  connectionTimeout: 20_000,
-  greetingTimeout: 20_000,
-  socketTimeout: 30_000,
+  service: "gmail",
   auth: {
     type: "OAuth2",
     user: process.env.GOOGLE_USER,
